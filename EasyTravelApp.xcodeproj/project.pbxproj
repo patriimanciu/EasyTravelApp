@@ -6,19 +6,83 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3F70AF642F68402300970F38 /* EasyTravelAppShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3F70AF5A2F68402300970F38 /* EasyTravelAppShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3F70AF622F68402300970F38 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3FA358C32F622E0C0015C0AF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3F70AF592F68402300970F38;
+			remoteInfo = EasyTravelAppShareExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3F70AF692F68402300970F38 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				3F70AF642F68402300970F38 /* EasyTravelAppShareExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		3F70AF5A2F68402300970F38 /* EasyTravelAppShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = EasyTravelAppShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FA358CB2F622E0D0015C0AF /* EasyTravelApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EasyTravelApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3F70AF552F683FAC00970F38 /* Exceptions for "EasyTravelApp" folder in "EasyTravelApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 3FA358CA2F622E0D0015C0AF /* EasyTravelApp */;
+		};
+		3F70AF682F68402300970F38 /* Exceptions for "EasyTravelAppShareExtension" folder in "EasyTravelAppShareExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 3F70AF592F68402300970F38 /* EasyTravelAppShareExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		3F70AF5B2F68402300970F38 /* EasyTravelAppShareExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3F70AF682F68402300970F38 /* Exceptions for "EasyTravelAppShareExtension" folder in "EasyTravelAppShareExtension" target */,
+			);
+			path = EasyTravelAppShareExtension;
+			sourceTree = "<group>";
+		};
 		3FA358CD2F622E0D0015C0AF /* EasyTravelApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3F70AF552F683FAC00970F38 /* Exceptions for "EasyTravelApp" folder in "EasyTravelApp" target */,
+			);
 			path = EasyTravelApp;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3F70AF572F68402300970F38 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3FA358C82F622E0D0015C0AF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -33,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				3FA358CD2F622E0D0015C0AF /* EasyTravelApp */,
+				3F70AF5B2F68402300970F38 /* EasyTravelAppShareExtension */,
 				3FA358CC2F622E0D0015C0AF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				3FA358CB2F622E0D0015C0AF /* EasyTravelApp.app */,
+				3F70AF5A2F68402300970F38 /* EasyTravelAppShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +114,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		3F70AF592F68402300970F38 /* EasyTravelAppShareExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3F70AF652F68402300970F38 /* Build configuration list for PBXNativeTarget "EasyTravelAppShareExtension" */;
+			buildPhases = (
+				3F70AF562F68402300970F38 /* Sources */,
+				3F70AF572F68402300970F38 /* Frameworks */,
+				3F70AF582F68402300970F38 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				3F70AF5B2F68402300970F38 /* EasyTravelAppShareExtension */,
+			);
+			name = EasyTravelAppShareExtension;
+			packageProductDependencies = (
+			);
+			productName = EasyTravelAppShareExtension;
+			productReference = 3F70AF5A2F68402300970F38 /* EasyTravelAppShareExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		3FA358CA2F622E0D0015C0AF /* EasyTravelApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3FA358D62F622E230015C0AF /* Build configuration list for PBXNativeTarget "EasyTravelApp" */;
@@ -55,10 +143,12 @@
 				3FA358C72F622E0D0015C0AF /* Sources */,
 				3FA358C82F622E0D0015C0AF /* Frameworks */,
 				3FA358C92F622E0D0015C0AF /* Resources */,
+				3F70AF692F68402300970F38 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				3F70AF632F68402300970F38 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				3FA358CD2F622E0D0015C0AF /* EasyTravelApp */,
@@ -80,6 +170,9 @@
 				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 2610;
 				TargetAttributes = {
+					3F70AF592F68402300970F38 = {
+						CreatedOnToolsVersion = 26.1;
+					};
 					3FA358CA2F622E0D0015C0AF = {
 						CreatedOnToolsVersion = 26.1;
 					};
@@ -100,11 +193,19 @@
 			projectRoot = "";
 			targets = (
 				3FA358CA2F622E0D0015C0AF /* EasyTravelApp */,
+				3F70AF592F68402300970F38 /* EasyTravelAppShareExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		3F70AF582F68402300970F38 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3FA358C92F622E0D0015C0AF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +216,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3F70AF562F68402300970F38 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3FA358C72F622E0D0015C0AF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +232,71 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		3F70AF632F68402300970F38 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3F70AF592F68402300970F38 /* EasyTravelAppShareExtension */;
+			targetProxy = 3F70AF622F68402300970F38 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		3F70AF662F68402300970F38 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SXP48J8996;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EasyTravelAppShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = EasyTravelAppShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Patri.EasyTravelApp.EasyTravelAppShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3F70AF672F68402300970F38 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SXP48J8996;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EasyTravelAppShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = EasyTravelAppShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Patri.EasyTravelApp.EasyTravelAppShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		3FA358D42F622E230015C0AF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -256,6 +428,7 @@
 				DEVELOPMENT_TEAM = SXP48J8996;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EasyTravelApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -288,6 +461,7 @@
 				DEVELOPMENT_TEAM = SXP48J8996;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EasyTravelApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -313,6 +487,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3F70AF652F68402300970F38 /* Build configuration list for PBXNativeTarget "EasyTravelAppShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3F70AF662F68402300970F38 /* Debug */,
+				3F70AF672F68402300970F38 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		3FA358C62F622E0C0015C0AF /* Build configuration list for PBXProject "EasyTravelApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

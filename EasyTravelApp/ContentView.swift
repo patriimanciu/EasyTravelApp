@@ -8,17 +8,29 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject private var store: TravelStore
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            NavigationStack {
+                TripsView()
+                    .navigationTitle("Trips")
+            }
+            .tabItem {
+                Label("Trips", systemImage: "airplane")
+            }
+
+            NavigationStack {
+                InboxView()
+            }
+            .tabItem {
+                Label("Inbox", systemImage: "tray")
+            }
         }
-        .padding()
     }
 }
 
 #Preview {
     ContentView()
+        .environmentObject(TravelStore())
 }
