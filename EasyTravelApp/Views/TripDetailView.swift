@@ -5,7 +5,6 @@ struct TripDetailView: View {
     let tripID: Trip.ID
 
     @State private var isPresentingAddLocation = false
-    @State private var isPresentingImport = false
     @State private var selectedTab: Tab = .list
 
     enum Tab: String, CaseIterable, Identifiable {
@@ -83,14 +82,6 @@ struct TripDetailView: View {
                 }
                 .navigationTitle(trip.name)
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            isPresentingImport = true
-                        } label: {
-                            Image(systemName: "tray.and.arrow.down")
-                        }
-                        .accessibilityLabel("Import from video")
-                    }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             isPresentingAddLocation = true
@@ -102,9 +93,6 @@ struct TripDetailView: View {
                 }
                 .sheet(isPresented: $isPresentingAddLocation) {
                     AddLocationView(tripID: tripID, isPresented: $isPresentingAddLocation)
-                }
-                .sheet(isPresented: $isPresentingImport) {
-                    ImportFromVideoView(isPresented: $isPresentingImport)
                 }
                 .navigationDestination(for: LocationDetailRoute.self) { route in
                     LocationDetailView(locationID: route.locationID, tripID: route.tripID)

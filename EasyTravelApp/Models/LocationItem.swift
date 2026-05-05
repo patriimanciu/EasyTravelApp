@@ -7,6 +7,8 @@ struct LocationItem: Identifiable, Codable, Hashable {
         case museum
         case landmark
         case park
+        case neighborhood
+        case city
         case shopping
         case nightlife
         case hotel
@@ -21,6 +23,8 @@ struct LocationItem: Identifiable, Codable, Hashable {
             case .museum: "Museum"
             case .landmark: "Landmark"
             case .park: "Park"
+            case .neighborhood: "Neighborhood"
+            case .city: "City"
             case .shopping: "Shopping"
             case .nightlife: "Nightlife"
             case .hotel: "Hotel"
@@ -33,12 +37,14 @@ struct LocationItem: Identifiable, Codable, Hashable {
             case .landmark: 0
             case .museum: 1
             case .park: 2
-            case .restaurant: 3
-            case .cafe: 4
-            case .shopping: 5
-            case .nightlife: 6
-            case .hotel: 7
-            case .other: 8
+            case .neighborhood: 3
+            case .city: 4
+            case .restaurant: 5
+            case .cafe: 6
+            case .shopping: 7
+            case .nightlife: 8
+            case .hotel: 9
+            case .other: 10
             }
         }
     }
@@ -52,7 +58,11 @@ struct LocationItem: Identifiable, Codable, Hashable {
         if s.contains("hotel") { return .hotel }
         if s.contains("shop") || s.contains("market") || s.contains("mall") { return .shopping }
         if s.contains("bar") || s.contains("club") || s.contains("night") { return .nightlife }
+        if s.contains("neighborhood") || s.contains("neighbourhood") || s.contains("district") || s.contains("borough") || s.contains("quarter") {
+            return .neighborhood
+        }
         if s.contains("landmark") || s.contains("monument") || s.contains("cathedral") || s.contains("tower") || s.contains("bridge") { return .landmark }
+        if s == "city" { return .city }
         return .other
     }
 
@@ -80,7 +90,9 @@ struct LocationItem: Identifiable, Codable, Hashable {
     var address: String?
     var phoneNumber: String?
     var url: String?
-    var openingHours: String?
+    /// Weekday-based lines (e.g. "Monday: 9:00 AM – 5:00 PM").
+    /// Stored as multiple lines so the UI can render each day separately.
+    var openingHours: [String]?
     var createdAt: Date
     var source: Source
 
@@ -94,7 +106,7 @@ struct LocationItem: Identifiable, Codable, Hashable {
         address: String? = nil,
         phoneNumber: String? = nil,
         url: String? = nil,
-        openingHours: String? = nil,
+        openingHours: [String]? = nil,
         createdAt: Date = Date(),
         source: Source = .manual()
     ) {
@@ -124,7 +136,18 @@ struct LocationItem: Identifiable, Codable, Hashable {
         address = try container.decodeIfPresent(String.self, forKey: .address)
         phoneNumber = try container.decodeIfPresent(String.self, forKey: .phoneNumber)
         url = try container.decodeIfPresent(String.self, forKey: .url)
-        openingHours = try container.decodeIfPresent(String.self, forKey: .openingHours)
+        // Backward compatibility: older JSON stored openingHours as a single string.
+        if let lines = try container.decodeIfPresent([String].self, forKey: .openingHours) {
+            openingHours = lines.isEmpty ? nil : lines
+        } else if let legacy = try container.decodeIfPresent(String.self, forKey: .openingHours) {
+            let split = legacy
+                .split(whereSeparator: \.isNewline)
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+            openingHours = split.isEmpty ? nil : split
+        } else {
+            openingHours = nil
+        }
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         source = try container.decode(Source.self, forKey: .source)
     }

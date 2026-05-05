@@ -29,7 +29,7 @@ app = modal.App("easytravel-api")
 # FFmpeg required by yt-dlp audio extraction; Whisper + PyTorch are heavy — increase memory if OOM.
 image = (
     modal.Image.debian_slim(python_version="3.11")
-    .apt_install("ffmpeg")
+    .apt_install("ffmpeg", "tesseract-ocr")
     .pip_install(
         "fastapi[standard]",
         "uvicorn[standard]",
@@ -38,9 +38,12 @@ image = (
         "yt-dlp",
         "openai-whisper",
         "numpy",
+        "pillow",
+        "pytesseract",
     )
-    # CPU PyTorch (smaller image than default CUDA). For faster transcribe, add gpu="T4" on the function below.
+    # Keep yt-dlp current — YouTube/TikTok CDNs change often; stale builds hit HTTP 403 on video.
     .run_commands(
+        "pip install -U yt-dlp",
         "pip install torch --index-url https://download.pytorch.org/whl/cpu",
     )
     .add_local_dir(

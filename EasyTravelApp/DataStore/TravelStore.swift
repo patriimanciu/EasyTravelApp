@@ -52,6 +52,12 @@ final class TravelStore: ObservableObject {
         persistAsync()
     }
 
+    func deleteInboxLocations(locationIDs: Set<LocationItem.ID>) {
+        guard !locationIDs.isEmpty else { return }
+        inbox.removeAll(where: { locationIDs.contains($0.id) })
+        persistAsync()
+    }
+
     func moveInboxLocation(_ locationID: LocationItem.ID, to tripID: Trip.ID) {
         guard let inboxIdx = inbox.firstIndex(where: { $0.id == locationID }) else { return }
         let loc = inbox.remove(at: inboxIdx)

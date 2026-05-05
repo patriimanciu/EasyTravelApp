@@ -51,7 +51,7 @@ final class PlaceSearchViewModel: NSObject, ObservableObject {
             let pm = item.placemark
             selectedName = item.name ?? completion.title
             selectedCoordinate = pm.coordinate
-            selectedAddress = formatAddress(pm)
+            selectedAddress = MapPlaceFormatting.postalLine(from: pm)
             selectedPhoneNumber = item.phoneNumber
             selectedURL = item.url?.absoluteString
             isSearching = false
@@ -59,15 +59,6 @@ final class PlaceSearchViewModel: NSObject, ObservableObject {
             lastErrorMessage = "Search failed. Try a different query."
             isSearching = false
         }
-    }
-
-    private func formatAddress(_ placemark: MKPlacemark) -> String? {
-        var parts: [String] = []
-        if let sub = placemark.subThoroughfare { parts.append(sub) }
-        if let thoroughfare = placemark.thoroughfare { parts.append(thoroughfare) }
-        if let locality = placemark.locality { parts.append(locality) }
-        if let admin = placemark.administrativeArea, !parts.contains(admin) { parts.append(admin) }
-        return parts.isEmpty ? nil : parts.joined(separator: ", ")
     }
 }
 

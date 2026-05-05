@@ -6,6 +6,8 @@ struct InboxView: View {
     @State private var isSelectionMode = false
     @State private var selectedIDs: Set<LocationItem.ID> = []
     @State private var isPresentingAssign = false
+    @State private var confirmBulkDelete = false
+    @State private var isPresentingImport = false
 
     private var groupedInbox: [(category: LocationItem.Category, locations: [LocationItem])] {
         let groups = Dictionary(grouping: store.inbox, by: { $0.category })
@@ -46,20 +48,40 @@ struct InboxView: View {
                         isSelectionMode = false
                         selectedIDs = []
                     }
+                } else {
+                    Button {
+                        isPresentingImport = true
+                    } label: {
+                        Image(systemName: "tray.and.arrow.down")
+                    }
+                    .accessibilityLabel("Import from video")
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
                 if isSelectionMode {
-                    if !selectedIDs.isEmpty {
-                        HStack(spacing: 16) {
-                            Button("Clear") {
+                    Menu {
+                        Button("Select All") {
+                            selectedIDs = Set(store.inbox.map(\.id))
+                        }
+                        .disabled(store.inbox.isEmpty)
+                        if !selectedIDs.isEmpty {
+                            Button("Clear Selection") {
                                 selectedIDs = []
                             }
-                            Button("Assign \(selectedIDs.count)…") {
-                                isPresentingAssign = true
-                            }
-                            .fontWeight(.semibold)
                         }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                    }
+                    if !selectedIDs.isEmpty {
+                        Button(role: .destructive) {
+                            confirmBulkDelete = true
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                        Button("Assign \(selectedIDs.count)…") {
+                            isPresentingAssign = true
+                        }
+                        .fontWeight(.semibold)
                     }
                 } else {
                     Button("Select") {
@@ -68,9 +90,27 @@ struct InboxView: View {
                 }
             }
         }
+        .confirmationDialog(
+            "Delete \(selectedIDs.count) location\(selectedIDs.count == 1 ? "" : "s") from inbox?",
+            isPresented: $confirmBulkDelete,
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                let ids = selectedIDs
+                store.deleteInboxLocations(locationIDs: ids)
+                selectedIDs = []
+                if store.inbox.isEmpty {
+                    isSelectionMode = false
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        }
         .sheet(isPresented: $isPresentingAssign) {
             AssignToTripView(isPresented: $isPresentingAssign, selectedLocationIDs: selectedIDs)
                 .environmentObject(store)
+        }
+        .sheet(isPresented: $isPresentingImport) {
+            ImportFromVideoView(isPresented: $isPresentingImport)
         }
         .onChange(of: isPresentingAssign) { _, isPresented in
             if !isPresented {
@@ -104,6 +144,10 @@ struct InboxView: View {
             .buttonStyle(.plain)
             .contextMenu {
                 Button("Assign to trip…", action: assignContextMenu)
+                Button("Delete", role: .destructive) {
+                    store.deleteInboxLocations(locationIDs: Set([loc.id]))
+                    selectedIDs.remove(loc.id)
+                }
             }
         } else {
             NavigationLink(value: LocationDetailRoute(tripID: nil, locationID: loc.id)) {
@@ -111,6 +155,9 @@ struct InboxView: View {
             }
             .contextMenu {
                 Button("Assign to trip…", action: assignContextMenu)
+                Button("Delete", role: .destructive) {
+                    store.deleteInboxLocation(locationID: loc.id)
+                }
             }
         }
     }

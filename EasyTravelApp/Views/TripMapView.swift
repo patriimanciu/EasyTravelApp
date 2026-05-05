@@ -37,6 +37,8 @@ struct TripMapView: View {
         case .landmark: .blue
         case .museum: .purple
         case .park: .green
+        case .neighborhood: .mint
+        case .city: .cyan
         case .restaurant: .red
         case .cafe: .orange
         case .shopping: .pink

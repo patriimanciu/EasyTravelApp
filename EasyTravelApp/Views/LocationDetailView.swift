@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+internal import _LocationEssentials
 
 /// Used for navigation to LocationDetailView from both trip list and inbox.
 struct LocationDetailRoute: Hashable {
@@ -12,15 +13,7 @@ struct LocationDetailView: View {
     let locationID: LocationItem.ID
     let tripID: Trip.ID?
 
-    @State private var name: String = ""
-    @State private var category: LocationItem.Category = .other
-    @State private var address: String = ""
-    @State private var phoneNumber: String = ""
-    @State private var urlString: String = ""
-    @State private var openingHours: String = ""
-    @State private var notes: String = ""
     @State private var initialLocation: LocationItem?
-    @State private var hasChanges: Bool = false
 
     private var currentLocation: LocationItem? {
         store.location(id: locationID, tripID: tripID)
@@ -28,61 +21,23 @@ struct LocationDetailView: View {
 
     var body: some View {
         Group {
-            if let _ = initialLocation {
+            if let loc = currentLocation, initialLocation != nil {
                 Form {
-                    Section("Place") {
-                        TextField("Name", text: $name)
-                            .textInputAutocapitalization(.words)
-                        Picker("Category", selection: $category) {
-                            ForEach(LocationItem.Category.allCases.sorted(by: { $0.sortRank < $1.sortRank })) { cat in
-                                Text(cat.title).tag(cat)
-                            }
-                        }
-                    }
-
-                    Section("Details") {
-                        TextField("Address", text: $address)
-                            .textInputAutocapitalization(.words)
-                        TextField("Phone", text: $phoneNumber)
-                            .keyboardType(.phonePad)
-                        TextField("Website", text: $urlString)
-                            .keyboardType(.URL)
-                            .textInputAutocapitalization(.never)
-                        TextField("Opening hours", text: $openingHours)
-                    }
-
-                    Section {
-                        TextField("What I want to do here", text: $notes, axis: .vertical)
-                            .lineLimit(3...8)
-                    } header: {
-                        Text("Notes")
-                    } footer: {
-                        Text("Add your plans or ideas for this spot.")
-                    }
-
-                    Section("Map") {
-                        if let loc = currentLocation {
-                            MiniMapView(latitude: loc.latitude, longitude: loc.longitude, name: loc.name)
-                                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                        }
-                    }
+                    placeSection(loc: loc)
+                    detailsSection(loc: loc)
+                    notesSection(loc: loc)
+                    mapSection(loc: loc)
                 }
                 .navigationTitle("Location")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        if hasChanges {
-                            Button("Save") { save() }
-                                .fontWeight(.semibold)
+                        NavigationLink("Edit") {
+                            EditLocationView(locationID: locationID, tripID: tripID)
+                                .environmentObject(store)
                         }
+                        .fontWeight(.semibold)
                     }
                 }
-                .onChange(of: name) { _, _ in setHasChanges() }
-                .onChange(of: category) { _, _ in setHasChanges() }
-                .onChange(of: address) { _, _ in setHasChanges() }
-                .onChange(of: phoneNumber) { _, _ in setHasChanges() }
-                .onChange(of: urlString) { _, _ in setHasChanges() }
-                .onChange(of: openingHours) { _, _ in setHasChanges() }
-                .onChange(of: notes) { _, _ in setHasChanges() }
             } else {
                 ContentUnavailableView("Location not found", systemImage: "mappin.slash")
             }
@@ -91,52 +46,83 @@ struct LocationDetailView: View {
         .onChange(of: currentLocation?.id) { _, _ in loadFromStore() }
     }
 
+    @ViewBuilder
+    private func placeSection(loc: LocationItem) -> some View {
+        Section {
+            Text(loc.name)
+                .font(.headline)
+            Text(loc.category.title)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("Place")
+        }
+    }
+
+    @ViewBuilder
+    private func detailsSection(loc: LocationItem) -> some View {
+        Section {
+            if let address = loc.address, !address.isEmpty {
+                LabeledContent("Address", value: address)
+            }
+            if let phone = loc.phoneNumber, !phone.isEmpty {
+                LabeledContent("Phone", value: phone)
+            }
+            if let url = loc.url, !url.isEmpty {
+                LabeledContent("Website", value: url)
+            }
+
+            let summary = OpeningHoursFormatter.summary(openingHours: loc.openingHours, category: loc.category)
+            if summary != "—" {
+                LabeledContent("Opening hours", value: summary)
+            }
+
+            let lines = OpeningHoursFormatter.displayLines(openingHours: loc.openingHours, category: loc.category)
+            if !lines.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(lines, id: \.self) { line in
+                        Text(line)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        } header: {
+            Text("Details")
+        }
+    }
+
+    @ViewBuilder
+    private func notesSection(loc: LocationItem) -> some View {
+        Section {
+            if let notes = loc.notes, !notes.isEmpty {
+                Text(notes)
+            } else {
+                Text("No notes yet.")
+                    .foregroundStyle(.secondary)
+            }
+        } header: {
+            Text("Notes")
+        } footer: {
+            Text("Add your plans or ideas for this spot.")
+        }
+    }
+
+    @ViewBuilder
+    private func mapSection(loc: LocationItem) -> some View {
+        Section {
+            MiniMapView(latitude: loc.latitude, longitude: loc.longitude, name: loc.name)
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+        } header: {
+            Text("Map")
+        }
+    }
+
     private func loadFromStore() {
         guard let loc = currentLocation else {
             initialLocation = nil
             return
         }
         initialLocation = loc
-        name = loc.name
-        category = loc.category
-        address = loc.address ?? ""
-        phoneNumber = loc.phoneNumber ?? ""
-        urlString = loc.url ?? ""
-        openingHours = loc.openingHours ?? ""
-        notes = loc.notes ?? ""
-        hasChanges = false
-    }
-
-    private func setHasChanges() {
-        guard let loc = initialLocation else { return }
-        hasChanges = name != loc.name
-            || category != loc.category
-            || address != (loc.address ?? "")
-            || phoneNumber != (loc.phoneNumber ?? "")
-            || urlString != (loc.url ?? "")
-            || openingHours != (loc.openingHours ?? "")
-            || notes != (loc.notes ?? "")
-    }
-
-    private func save() {
-        guard let loc = initialLocation else { return }
-        let updated = LocationItem(
-            id: loc.id,
-            name: name.trimmingCharacters(in: .whitespacesAndNewlines),
-            latitude: loc.latitude,
-            longitude: loc.longitude,
-            category: category,
-            notes: notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : notes.trimmingCharacters(in: .whitespacesAndNewlines),
-            address: address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : address.trimmingCharacters(in: .whitespacesAndNewlines),
-            phoneNumber: phoneNumber.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : phoneNumber.trimmingCharacters(in: .whitespacesAndNewlines),
-            url: urlString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : urlString.trimmingCharacters(in: .whitespacesAndNewlines),
-            openingHours: openingHours.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : openingHours.trimmingCharacters(in: .whitespacesAndNewlines),
-            createdAt: loc.createdAt,
-            source: loc.source
-        )
-        store.updateLocation(tripID: tripID, location: updated)
-        initialLocation = updated
-        hasChanges = false
     }
 }
 

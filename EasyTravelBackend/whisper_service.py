@@ -1,116 +1,120 @@
+"""
+FR-02: ASR via local Whisper — transcript plus segment timestamps when available.
+
+Works with any media path Whisper/ffmpeg can decode (video container or audio file).
+"""
+
+from __future__ import annotations
+
 import asyncio
 import os
-import yt_dlp
-import whisper
-import torch
+from typing import Any
 
-async def download_audio_and_metadata(video_url):
+from media_ingest import MediaBundle, cleanup_bundle, download_media_bundle
+
+# Whisper model name is part of run provenance (NFR-07)
+WHISPER_MODEL_NAME = os.environ.get("WHISPER_MODEL", "base")
+
+
+def transcribe_local_file(
+    media_path: str,
+    *,
+    language: str = "en",
+) -> dict[str, Any]:
     """
-    Download audio from a video URL and extract metadata (description/caption).
-    Returns a tuple: (audio_filename, video_description, video_title)
+    Run Whisper on a local file. Returns:
+      - plain_text: str
+      - segments: list[{start, end, text}]
+      - model_name: str
+      - device: str
     """
-    print("Fetching metadata and downloading audio...")
+    import torch
+    import whisper
 
-    # Options for fetching metadata only (no download yet)
-    ydl_info_opts = {
-        'quiet': True,
-        'no_warnings': True,
-    }
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"[asr] Using device: {device}, model: {WHISPER_MODEL_NAME}")
+    model = whisper.load_model(WHISPER_MODEL_NAME, device=device)
 
-    loop = asyncio.get_event_loop()
-    
-    # Extract video info to get title and description
-    video_info = await loop.run_in_executor(
-        None,
-        lambda: yt_dlp.YoutubeDL(ydl_info_opts).extract_info(video_url, download=False)
+    result = model.transcribe(
+        media_path,
+        language=language,
+        fp16=device == "cuda",
+        verbose=False,
     )
 
-    # Extract metadata safely
-    video_title = video_info.get('title', 'video')
-    # For Instagram/TikTok/YouTube, 'description' usually holds the caption
-    video_description = video_info.get('description', '') 
-    
-    # Create a safe filename
-    safe_title = "".join([c if c.isalnum() or c in " -_" else "_" for c in video_title])
-    filename = f"{safe_title}.mp3"
-
-    ydl_download_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-        'outtmpl': f'{safe_title}.%(ext)s',
-        'progress_hooks': [lambda d: print(f"Download progress: {d.get('_percent_str', 'downloading...')}")],
-        'overwrites': True,
-        'quiet': True
-    }
-
-    # Download the audio
-    await loop.run_in_executor(
-        None,
-        lambda: yt_dlp.YoutubeDL(ydl_download_opts).download([video_url])
-    )
-
-    return filename, video_description, video_title
-
-async def transcribe_video(video_url, language="en", output_file="output_data.txt"):
-    """
-    Download video audio, transcribe it, and save both transcript and caption.
-    """
-    try:
-        # Get audio file and metadata
-        audio_file, description, title = await download_audio_and_metadata(video_url)
-
-        # Load Whisper model
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        print(f"Using device: {device}")
-        print("Loading Whisper model...")
-        
-        # Use 'base' or 'small' for speed, 'large' for accuracy
-        model = whisper.load_model("base", device=device)
-
-        print("Transcribing audio...")
-        result = model.transcribe(
-            audio_file,
-            language=language,
-            without_timestamps=True,
-            fp16=(device == "cuda")
+    segments_out: list[dict[str, Any]] = []
+    for seg in result.get("segments") or []:
+        segments_out.append(
+            {
+                "start": float(seg.get("start", 0.0)),
+                "end": float(seg.get("end", 0.0)),
+                "text": (seg.get("text") or "").strip(),
+            }
         )
 
-        transcript_text = result["text"]
+    plain = (result.get("text") or "").strip()
+    return {
+        "plain_text": plain,
+        "segments": segments_out,
+        "model_name": WHISPER_MODEL_NAME,
+        "device": device,
+        "detected_language": result.get("language"),
+    }
 
-        # Format the final output
+
+def format_asr_block(asr: dict[str, Any]) -> str:
+    """Human-readable ASR section for consolidation prompt."""
+    lines = ["=== ASR TRANSCRIPT (FR-02) ==="]
+    lines.append(f"Model: {asr.get('model_name')}  device: {asr.get('device')}")
+    if asr.get("detected_language"):
+        lines.append(f"Detected language: {asr['detected_language']}")
+    lines.append("")
+    for seg in asr.get("segments") or []:
+        if not seg.get("text"):
+            continue
+        lines.append(f"[{seg['start']:.2f}s – {seg['end']:.2f}s] {seg['text']}")
+    lines.append("")
+    lines.append("Plain text:")
+    lines.append(asr.get("plain_text") or "")
+    return "\n".join(lines)
+
+
+async def transcribe_video(video_url: str, language: str = "en", output_file: str | None = "output_data.txt"):
+    """
+    Legacy helper: download media + transcribe + optional save (same composite format as before).
+    Prefer using media_ingest + transcribe_local_file from main pipeline for multimodal runs.
+    """
+    bundle = await download_media_bundle(video_url)
+    try:
+        path = bundle.video_path or bundle.audio_path
+        if not path:
+            return None
+        asr = transcribe_local_file(path, language=language)
         final_output = (
             f"--- VIDEO METADATA ---\n"
-            f"Title: {title}\n"
-            f"Caption/Description: {description}\n\n"
+            f"Title: {bundle.title}\n"
+            f"Caption/Description: {bundle.description}\n\n"
             f"--- TRANSCRIPT ---\n"
-            f"{transcript_text}\n"
+            f"{asr['plain_text']}\n"
         )
-
-        # Save to file
         if output_file:
             with open(output_file, "w", encoding="utf-8") as f:
                 f.write(final_output)
             print(f"\nSuccess! Data saved to {output_file}")
-
         return final_output
-
     except Exception as e:
         print(f"Error: {e}")
         return None
     finally:
-        # Cleanup audio file
-        if 'audio_file' in locals() and os.path.exists(audio_file):
-            os.remove(audio_file)
+        cleanup_bundle(bundle)
+
 
 async def main():
-    url = input("Whisper Video Transcription \n -------------------------- \n\n Please enter the video URL: \n")
-    
-    # You can change the output filename here
+    url = input(
+        "Whisper Video Transcription \n -------------------------- \n\n Please enter the video URL: \n"
+    )
     await transcribe_video(url, output_file="trip_data.txt")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
