@@ -14,6 +14,7 @@ struct EditLocationView: View {
     @State private var urlString: String = ""
     @State private var openingHoursDraftText: String = ""
     @State private var notes: String = ""
+    @State private var visitPriority: LocationItem.VisitPriority = .normal
     @State private var initialLocation: LocationItem?
 
     private var categories: [LocationItem.Category] {
@@ -76,6 +77,19 @@ struct EditLocationView: View {
             }
 
             Section {
+                Picker("Priority", selection: $visitPriority) {
+                    ForEach(LocationItem.VisitPriority.allCases.sorted(by: { $0.rawValue > $1.rawValue })) { p in
+                        Text(p.title).tag(p)
+                    }
+                }
+                Text(visitPriority.planningHint)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            } header: {
+                Text("Itinerary priority")
+            }
+
+            Section {
                 TextField("What I want to do here", text: $notes, axis: .vertical)
                     .lineLimit(3...10)
             } header: {
@@ -97,6 +111,7 @@ struct EditLocationView: View {
         urlString = loc.url ?? ""
         openingHoursDraftText = (loc.openingHours ?? []).joined(separator: "\n")
         notes = loc.notes ?? ""
+        visitPriority = loc.visitPriority
     }
 
     private func nonBlank(_ s: String) -> String? {
@@ -126,6 +141,7 @@ struct EditLocationView: View {
             phoneNumber: nonBlank(phoneNumber),
             url: nonBlank(urlString),
             openingHours: parseHoursLines(openingHoursDraftText),
+            visitPriority: visitPriority,
             createdAt: loc.createdAt,
             source: loc.source
         )

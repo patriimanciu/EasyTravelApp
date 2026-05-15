@@ -16,6 +16,18 @@ from media_ingest import MediaBundle, cleanup_bundle, download_media_bundle
 WHISPER_MODEL_NAME = os.environ.get("WHISPER_MODEL", "base")
 
 
+def empty_asr_result(*, note: str | None = None) -> dict[str, Any]:
+    """Placeholder when ASR is skipped or fails (OCR/caption-only pipeline)."""
+    return {
+        "plain_text": "",
+        "segments": [],
+        "model_name": WHISPER_MODEL_NAME,
+        "device": "skipped",
+        "detected_language": None,
+        "skipped_reason": note,
+    }
+
+
 def transcribe_local_file(
     media_path: str,
     *,
@@ -64,6 +76,8 @@ def transcribe_local_file(
 
 def format_asr_block(asr: dict[str, Any]) -> str:
     """Human-readable ASR section for consolidation prompt."""
+    if asr.get("skipped_reason") and not (asr.get("plain_text") or "").strip():
+        return f"=== ASR TRANSCRIPT (FR-02) ===\n(Skipped: {asr['skipped_reason']})\n"
     lines = ["=== ASR TRANSCRIPT (FR-02) ==="]
     lines.append(f"Model: {asr.get('model_name')}  device: {asr.get('device')}")
     if asr.get("detected_language"):
@@ -86,7 +100,7 @@ async def transcribe_video(video_url: str, language: str = "en", output_file: st
     """
     bundle = await download_media_bundle(video_url)
     try:
-        path = bundle.video_path or bundle.audio_path
+        path = bundle.asr_path()
         if not path:
             return None
         asr = transcribe_local_file(path, language=language)

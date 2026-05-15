@@ -12,7 +12,7 @@ Run from this directory (EasyTravelBackend):
 
 Use the printed URL in the iOS app as base URL, e.g.:
   https://YOUR-WORKSPACE--easytravel-api-serve.modal.run/
-  (Swift BackendClient will POST to .../api/process-video)
+  (Swift BackendClient POSTs to .../api/process-video; TTDP routing: .../api/plan-itinerary)
 """
 
 from __future__ import annotations

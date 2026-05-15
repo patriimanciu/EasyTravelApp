@@ -64,6 +64,13 @@ enum OpeningHoursFormatter {
         return "\(lines[0]) • \(lines[1]) • …"
     }
 
+    /// One-line condensed hours for trip list rows (e.g. `Mon–Fri: 8:00 AM - 8:00 PM • Sat–Sun: 10:00 AM - 6:00 PM`).
+    static func condensedListLine(openingHours: [String]?, category: LocationItem.Category) -> String? {
+        let lines = displayLines(openingHours: openingHours, category: category)
+        guard !lines.isEmpty else { return nil }
+        return lines.joined(separator: " · ")
+    }
+
     private static func isLikelyAlwaysOpen(category: LocationItem.Category) -> Bool {
         switch category {
         case .park, .neighborhood:

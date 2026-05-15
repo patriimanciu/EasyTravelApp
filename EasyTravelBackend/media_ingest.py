@@ -13,6 +13,7 @@ import asyncio
 import json
 import logging
 import os
+import subprocess
 import tempfile
 from dataclasses import dataclass
 from typing import Any
@@ -30,7 +31,15 @@ class MediaBundle:
     title: str
     description: str
     video_path: str | None  # MP4/MKV/WebM etc., may be None if audio-only fallback
-    audio_path: str | None  # Set when audio-only fallback
+    audio_path: str | None  # Separate audio when video is silent or audio-only fallback
+
+    def asr_path(self) -> str | None:
+        """Local file suitable for Whisper — never a video-only container."""
+        if self.audio_path:
+            return self.audio_path
+        if self.video_path and file_has_audio_stream(self.video_path):
+            return self.video_path
+        return None
 
 
 def _safe_stem(title: str, max_len: int = 80) -> str:
@@ -81,22 +90,58 @@ def _base_ydl_opts() -> dict[str, Any]:
     return opts
 
 
+def file_has_audio_stream(path: str) -> bool:
+    """True when ffprobe finds at least one audio stream (Whisper/ffmpeg can decode it)."""
+    try:
+        proc = subprocess.run(
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-select_streams",
+                "a:0",
+                "-show_entries",
+                "stream=codec_type",
+                "-of",
+                "csv=p=0",
+                path,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=45,
+            check=False,
+        )
+        return proc.returncode == 0 and "audio" in (proc.stdout or "").lower()
+    except (OSError, subprocess.TimeoutExpired) as e:
+        logger.warning("[ingest] ffprobe failed for %s: %s", path, e)
+        return False
+
+
+# yt-dlp requires explicit tests, e.g. [acodec!=none] — bare [acodec] is invalid.
+_MUXED_FORMAT = "best[acodec!=none][vcodec!=none]/best/bv*+ba/bestvideo+bestaudio/b"
+
+
 def _video_strategies() -> list[dict[str, Any]]:
     """
     Ordered fallbacks when the first format/client hits HTTP 403 on the video stream.
     Full env override replaces this list (one attempt) if YTDLP_EXTRACTOR_ARGS_JSON is set.
+    Prefer muxed formats first so TikTok/short-form do not yield silent video-only MP4s.
     """
     return [
         {
             "merge_output_format": "mp4",
-            "format": "bv*+ba/bestvideo+bestaudio/b",
+            "format": _MUXED_FORMAT,
+        },
+        {
+            "merge_output_format": "mp4",
+            "format": _MUXED_FORMAT,
             "extractor_args": {
                 "youtube": {"player_client": ["android", "web", "ios"]},
             },
         },
         {
             "merge_output_format": "mkv",
-            "format": "bv*+ba/bestvideo+bestaudio/b",
+            "format": _MUXED_FORMAT,
             "extractor_args": {
                 "youtube": {"player_client": ["tv_embedded", "android", "web"]},
             },
@@ -113,6 +158,56 @@ def _video_strategies() -> list[dict[str, Any]]:
 
 def _download_to_dir(url: str, opts: dict[str, Any]) -> None:
     yt_dlp.YoutubeDL(opts).download([url])
+
+
+_AUDIO_EXTENSIONS = {".mp3", ".m4a", ".opus", ".wav", ".webm", ".aac"}
+
+
+async def _download_audio_track(
+    loop: asyncio.AbstractEventLoop,
+    url: str,
+    temp_dir: str,
+    stem: str,
+    base: dict[str, Any],
+    *,
+    suffix: str = "",
+) -> str | None:
+    """
+    Download best audio into temp_dir. Tries native container first (no FFmpegExtractAudio),
+    then mp3 extraction — some TikTok streams break ffprobe during postprocess.
+    """
+    tag = f"_{suffix}" if suffix else ""
+    audio_stem = os.path.join(temp_dir, f"{stem}{tag}")
+    outtmpl = f"{audio_stem}.%(ext)s"
+    strategies: list[dict[str, Any]] = [
+        {
+            "format": "bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio/best",
+            "postprocessors": [],
+        },
+        {"format": "bestaudio/best", "postprocessors": []},
+        {
+            "format": "bestaudio/best",
+            "postprocessors": [
+                {"key": "FFmpegExtractAudio", "preferredcodec": "mp3", "preferredquality": "192"}
+            ],
+        },
+    ]
+    for j, strat in enumerate(strategies):
+        opts = {
+            **base,
+            **strat,
+            "outtmpl": outtmpl,
+            "overwrites": True,
+        }
+        try:
+            await loop.run_in_executor(None, lambda o=opts: _download_to_dir(url, o))
+            path = _find_media_file(temp_dir, extensions=_AUDIO_EXTENSIONS, name_contains=tag or None)
+            if path and file_has_audio_stream(path):
+                logger.info("[ingest] Audio download OK (strategy %s)", j)
+                return path
+        except Exception as e:
+            logger.warning("[ingest] Audio download failed (strategy %s): %s", j, e)
+    return None
 
 
 async def download_media_bundle(video_url: str) -> MediaBundle:
@@ -157,13 +252,32 @@ async def download_media_bundle(video_url: str) -> MediaBundle:
             await loop.run_in_executor(None, lambda o=opts: _download_to_dir(video_url, o))
             video_path = _find_media_file(temp_dir, extensions={".mp4", ".mkv", ".webm", ".mov"})
             if video_path:
-                logger.info("[ingest] Video download OK (strategy %s)", i)
+                audio_path: str | None = None
+                if not file_has_audio_stream(video_path):
+                    logger.warning(
+                        "[ingest] Video has no audio track (strategy %s); downloading separate audio",
+                        i,
+                    )
+                    audio_path = await _download_audio_track(
+                        loop, video_url, temp_dir, stem, base, suffix="asr"
+                    )
+                    if not audio_path:
+                        logger.warning(
+                            "[ingest] Separate audio unavailable — OCR/caption only for ASR (strategy %s)",
+                            i,
+                        )
+                asr_mode = (
+                    "muxed"
+                    if audio_path is None and file_has_audio_stream(video_path)
+                    else ("separate_audio" if audio_path else "video_only")
+                )
+                logger.info("[ingest] Video download OK (strategy %s, asr=%s)", i, asr_mode)
                 return MediaBundle(
                     temp_dir=temp_dir,
                     title=str(title),
                     description=str(description),
                     video_path=video_path,
-                    audio_path=None,
+                    audio_path=audio_path,
                 )
             logger.warning("[ingest] yt-dlp exited cleanly but no video file found (strategy %s)", i)
         except Exception as e:
@@ -173,21 +287,7 @@ async def download_media_bundle(video_url: str) -> MediaBundle:
     if last_video_error:
         logger.info("[ingest] All video strategies failed, trying audio-only: %s", last_video_error)
 
-    audio_stem = os.path.join(temp_dir, stem)
-    audio_opts = {
-        **base,
-        "format": "bestaudio/best",
-        "postprocessors": [
-            {"key": "FFmpegExtractAudio", "preferredcodec": "mp3", "preferredquality": "192"}
-        ],
-        "outtmpl": f"{audio_stem}.%(ext)s",
-        "overwrites": True,
-    }
-    await loop.run_in_executor(
-        None,
-        lambda: _download_to_dir(video_url, audio_opts),
-    )
-    audio_path = _find_media_file(temp_dir, extensions={".mp3", ".m4a", ".opus", ".wav", ".webm"})
+    audio_path = await _download_audio_track(loop, video_url, temp_dir, stem, base)
     if not audio_path:
         raise RuntimeError("Could not download video or audio for this URL.")
 
@@ -200,19 +300,25 @@ async def download_media_bundle(video_url: str) -> MediaBundle:
     )
 
 
-def _find_media_file(directory: str, extensions: set[str]) -> str | None:
+def _find_media_file(
+    directory: str,
+    extensions: set[str],
+    *,
+    name_contains: str | None = None,
+) -> str | None:
     best: tuple[float, str] | None = None
     for name in os.listdir(directory):
         path = os.path.join(directory, name)
         if not os.path.isfile(path):
             continue
+        if name_contains and name_contains not in name:
+            continue
         ext = os.path.splitext(name)[1].lower()
         if ext not in extensions:
             continue
         mtime = os.path.getmtime(path)
-        cand = (mtime, path)
         if best is None or mtime > best[0]:
-            best = cand
+            best = (mtime, path)
     return best[1] if best else None
 
 

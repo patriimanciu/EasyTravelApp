@@ -36,6 +36,16 @@ struct BackendClient {
         return URLSession(configuration: config)
     }()
 
+    private static let routingTimeoutSeconds: TimeInterval = 120
+
+    private static let routingSession: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = routingTimeoutSeconds
+        config.timeoutIntervalForResource = routingTimeoutSeconds
+        config.waitsForConnectivity = true
+        return URLSession(configuration: config)
+    }()
+
     func processVideo(url videoURL: String) async throws -> LocationExtractionDTO {
         guard let baseURL = URL(string: baseURLString) else { throw BackendClientError.invalidBaseURL }
         let endpoint = baseURL.appending(path: "api/process-video")
@@ -57,6 +67,32 @@ struct BackendClient {
         }
 
         return try JSONDecoder().decode(LocationExtractionDTO.self, from: data)
+    }
+
+    func planItinerary(_ body: PlanItineraryRequestDTO) async throws -> PlanItineraryResponseDTO {
+        guard let baseURL = URL(string: baseURLString) else { throw BackendClientError.invalidBaseURL }
+        let endpoint = baseURL.appending(path: "api/plan-itinerary")
+
+        var req = URLRequest(url: endpoint)
+        req.httpMethod = "POST"
+        req.timeoutInterval = Self.routingTimeoutSeconds
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        req.httpBody = try encoder.encode(body)
+
+        let (data, response) = try await Self.routingSession.data(for: req)
+        guard let http = response as? HTTPURLResponse else { throw BackendClientError.invalidResponse }
+
+        if !(200..<300).contains(http.statusCode) {
+            let message = (try? JSONDecoder().decode(BackendErrorDTO.self, from: data))?.detail
+            throw BackendClientError.serverError(statusCode: http.statusCode, message: message)
+        }
+
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try decoder.decode(PlanItineraryResponseDTO.self, from: data)
     }
 }
 

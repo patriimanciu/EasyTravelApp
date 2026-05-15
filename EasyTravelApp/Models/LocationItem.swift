@@ -49,6 +49,36 @@ struct LocationItem: Identifiable, Codable, Hashable {
         }
     }
 
+    /// How strongly this stop should appear on the itinerary (5 = must include, 1 = only if time).
+    enum VisitPriority: Int, CaseIterable, Codable, Hashable, Identifiable {
+        case low = 1
+        case ifTime = 2
+        case normal = 3
+        case high = 4
+        case mustSee = 5
+
+        var id: Int { rawValue }
+
+        var title: String {
+            switch self {
+            case .mustSee: "Must see"
+            case .high: "Want to see"
+            case .normal: "Normal"
+            case .ifTime: "If there's time"
+            case .low: "Low priority"
+            }
+        }
+
+        var planningHint: String {
+            switch self {
+            case .mustSee: "Always scheduled; dropped only if impossible."
+            case .high: "Scheduled before lower-priority stops."
+            case .normal: "Standard."
+            case .ifTime, .low: "Added when the day budget allows."
+            }
+        }
+    }
+
     static func category(fromBackendString raw: String) -> Category {
         let s = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         if s.contains("rest") || s.contains("bistro") || s.contains("food") || s.contains("diner") { return .restaurant }
@@ -93,6 +123,7 @@ struct LocationItem: Identifiable, Codable, Hashable {
     /// Weekday-based lines (e.g. "Monday: 9:00 AM – 5:00 PM").
     /// Stored as multiple lines so the UI can render each day separately.
     var openingHours: [String]?
+    var visitPriority: VisitPriority
     var createdAt: Date
     var source: Source
 
@@ -107,6 +138,7 @@ struct LocationItem: Identifiable, Codable, Hashable {
         phoneNumber: String? = nil,
         url: String? = nil,
         openingHours: [String]? = nil,
+        visitPriority: VisitPriority = .normal,
         createdAt: Date = Date(),
         source: Source = .manual()
     ) {
@@ -120,6 +152,7 @@ struct LocationItem: Identifiable, Codable, Hashable {
         self.phoneNumber = phoneNumber
         self.url = url
         self.openingHours = openingHours
+        self.visitPriority = visitPriority
         self.createdAt = createdAt
         self.source = source
     }
@@ -148,8 +181,36 @@ struct LocationItem: Identifiable, Codable, Hashable {
         } else {
             openingHours = nil
         }
+        if let p = try container.decodeIfPresent(Int.self, forKey: .visitPriority) {
+            visitPriority = VisitPriority(rawValue: min(5, max(1, p))) ?? .normal
+        } else {
+            visitPriority = .normal
+        }
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         source = try container.decode(Source.self, forKey: .source)
+    }
+
+    func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(name, forKey: .name)
+        try c.encode(latitude, forKey: .latitude)
+        try c.encode(longitude, forKey: .longitude)
+        try c.encode(category, forKey: .category)
+        try c.encodeIfPresent(notes, forKey: .notes)
+        try c.encodeIfPresent(address, forKey: .address)
+        try c.encodeIfPresent(phoneNumber, forKey: .phoneNumber)
+        try c.encodeIfPresent(url, forKey: .url)
+        try c.encodeIfPresent(openingHours, forKey: .openingHours)
+        try c.encode(visitPriority.rawValue, forKey: .visitPriority)
+        try c.encode(createdAt, forKey: .createdAt)
+        try c.encode(source, forKey: .source)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, name, latitude, longitude, category, notes, address, phoneNumber, url, openingHours
+        case visitPriority
+        case createdAt, source
     }
 }
 

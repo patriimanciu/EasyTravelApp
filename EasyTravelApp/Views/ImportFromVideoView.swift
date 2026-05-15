@@ -6,7 +6,8 @@ struct ImportFromVideoView: View {
     @Binding var isPresented: Bool
     var initialVideoURL: String? = nil
 
-    @State private var backendBaseURL: String = "https://patriimanciu--easytravel-api-serve.modal.run/"
+    @AppStorage("easytravelBackendBaseURL") private var backendBaseURL: String =
+        "https://patriimanciu--easytravel-api-serve.modal.run/"
     /// MapKit search has no opening hours; optional Google Places API (New) key fills them on import.
     @AppStorage("googlePlacesAPIKey") private var googlePlacesAPIKey: String = ""
     @State private var videoURL: String = ""
