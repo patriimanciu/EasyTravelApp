@@ -193,3 +193,12 @@ struct EditTripView: View {
         }
     }
 }
+
+#Preview("Edit trip") {
+    @Previewable @State var isPresented = true
+    EditTripView(
+        isPresented: $isPresented,
+        tripID: PreviewData.parisTripID
+    )
+    .environmentObject(TravelStore.preview)
+}

@@ -289,6 +289,7 @@ def dbscan_latlon(
             continue
         labels[i] = cluster_id
         queue = [x for x in nbrs if x != i]
+        queued: set[int] = set(queue)
         qi = 0
         while qi < len(queue):
             j = queue[qi]
@@ -296,7 +297,10 @@ def dbscan_latlon(
             if not visited[j]:
                 visited[j] = True
                 if labels[j] == -1 and len(neighbors[j]) >= min_pts:
-                    queue.extend(x for x in neighbors[j] if x not in queue)
+                    for x in neighbors[j]:
+                        if x not in queued:
+                            queued.add(x)
+                            queue.append(x)
             if labels[j] == -1:
                 labels[j] = cluster_id
         cluster_id += 1
@@ -776,14 +780,16 @@ def plan_ttdp_itinerary(
     matrix_osrm = ""
     if travel_model.lower() == "osrm":
         matrix_osrm = raw_osrm or DEFAULT_OSRM_PUBLIC_URL
-        mat = _osrm_table_duration_seconds(
-            list(lats) + [order_lat],
-            list(lons) + [order_lon],
+        # Probe OSRM reachability with a minimal 2-point table call rather than the full
+        # n+1 matrix (which was computed and then discarded).
+        probe = _osrm_table_duration_seconds(
+            [float(lats[0]), order_lat],
+            [float(lons[0]), order_lon],
             matrix_osrm,
             profile=osrm_prof,
             speed_m_s=speed_m_s,
         )
-        if mat is not None and mat.shape[0] == n + 1:
+        if probe is not None and probe.shape[0] == 2:
             used_model = "osrm"
         else:
             logger.info("OSRM matrix unavailable; using Haversine travel times.")

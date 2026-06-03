@@ -8,6 +8,7 @@ struct InboxView: View {
     @State private var isPresentingAssign = false
     @State private var confirmBulkDelete = false
     @State private var isPresentingImport = false
+    @State private var categoryFilter: LocationItem.Category?
 
     private var groupedInbox: [(category: LocationItem.Category, locations: [LocationItem])] {
         let groups = Dictionary(grouping: store.inbox, by: { $0.category })
@@ -16,80 +17,92 @@ struct InboxView: View {
             .sorted(by: { $0.category.sortRank < $1.category.sortRank })
     }
 
+    private var displayedGroups: [(category: LocationItem.Category, locations: [LocationItem])] {
+        guard let categoryFilter else { return groupedInbox }
+        return groupedInbox.filter { $0.category == categoryFilter }
+    }
+
+    private var visibleLocationCount: Int {
+        displayedGroups.reduce(0) { $0 + $1.locations.count }
+    }
+
     var body: some View {
-        List {
-            if store.inbox.isEmpty {
-                ContentUnavailableView("Nothing in Inbox", systemImage: "tray")
-            } else {
-                ForEach(groupedInbox, id: \.category) { group in
-                    Section(group.category.title) {
-                        ForEach(group.locations) { loc in
-                            rowContent(loc: loc)
-                        }
-                        .onDelete { offsets in
-                            guard !isSelectionMode else { return }
-                            let idsToDelete = offsets.compactMap { index in
-                                group.locations[safe: index]?.id
-                            }
-                            for id in idsToDelete {
-                                store.deleteInboxLocation(locationID: id)
-                                selectedIDs.remove(id)
-                            }
-                        }
-                    }
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppTheme.sectionSpacing) {
+                HomeHeaderView(
+                    greeting: "Inbox",
+                    subtitle: "Saved places",
+                    onAddTrip: nil
+                )
+                .padding(.top, 8)
+
+                ImportHeroCard {
+                    isPresentingImport = true
                 }
-            }
-        }
-        .navigationTitle("Inbox")
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                if isSelectionMode {
-                    Button("Done") {
-                        isSelectionMode = false
-                        selectedIDs = []
-                    }
-                } else {
-                    Button {
-                        isPresentingImport = true
-                    } label: {
-                        Image(systemName: "tray.and.arrow.down")
-                    }
-                    .accessibilityLabel("Import from video")
-                }
-            }
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                if isSelectionMode {
-                    Menu {
-                        Button("Select All") {
-                            selectedIDs = Set(store.inbox.map(\.id))
-                        }
-                        .disabled(store.inbox.isEmpty)
-                        if !selectedIDs.isEmpty {
-                            Button("Clear Selection") {
+
+                if !store.inbox.isEmpty {
+                    CategoryFilterScroll(selectedCategory: $categoryFilter)
+                        .padding(.horizontal, -AppTheme.pagePadding)
+
+                    HStack {
+                        SectionTitle(
+                            title: categoryFilter?.title ?? "All places",
+                            trailing: "\(visibleLocationCount)"
+                        )
+                        Spacer()
+                        Button(isSelectionMode ? "Done" : "Select") {
+                            if isSelectionMode {
+                                isSelectionMode = false
                                 selectedIDs = []
+                            } else {
+                                isSelectionMode = true
                             }
                         }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(AppTheme.charcoal)
                     }
-                    if !selectedIDs.isEmpty {
-                        Button(role: .destructive) {
-                            confirmBulkDelete = true
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                        Button("Assign \(selectedIDs.count)…") {
-                            isPresentingAssign = true
-                        }
-                        .fontWeight(.semibold)
+
+                    if isSelectionMode, !selectedIDs.isEmpty {
+                        selectionActionBar
                     }
+                }
+
+                if store.inbox.isEmpty {
+                    AppEmptyState(
+                        title: "Nothing in Inbox",
+                        systemImage: "tray",
+                        message: "Import from a video to collect places before adding them to a trip."
+                    )
+                } else if displayedGroups.isEmpty {
+                    AppEmptyState(
+                        title: "No matches",
+                        systemImage: categoryFilter?.symbolName ?? "line.3.horizontal.decrease.circle",
+                        message: "No inbox places in this category. Try another filter or choose All."
+                    )
                 } else {
-                    Button("Select") {
-                        isSelectionMode = true
+                    ForEach(displayedGroups, id: \.category) { group in
+                        VStack(alignment: .leading, spacing: 16) {
+                            if categoryFilter == nil {
+                                HStack(spacing: 8) {
+                                    CategoryIconBadge(category: group.category, size: 32)
+                                    Text(group.category.title)
+                                        .font(.headline)
+                                        .foregroundStyle(AppTheme.charcoal)
+                                }
+                            }
+
+                            ForEach(group.locations) { loc in
+                                rowContent(loc: loc)
+                            }
+                        }
                     }
                 }
             }
+            .appPagePadding()
+            .padding(.top, 12)
+            .appBottomTabPadding()
         }
+        .appScreenBackground()
         .confirmationDialog(
             "Delete \(selectedIDs.count) location\(selectedIDs.count == 1 ? "" : "s") from inbox?",
             isPresented: $confirmBulkDelete,
@@ -101,6 +114,7 @@ struct InboxView: View {
                 selectedIDs = []
                 if store.inbox.isEmpty {
                     isSelectionMode = false
+                    categoryFilter = nil
                 }
             }
             Button("Cancel", role: .cancel) {}
@@ -124,6 +138,30 @@ struct InboxView: View {
         }
     }
 
+    private var selectionActionBar: some View {
+        HStack(spacing: 12) {
+            Button(role: .destructive) {
+                confirmBulkDelete = true
+            } label: {
+                Label("Delete", systemImage: "trash")
+                    .font(.caption.weight(.semibold))
+            }
+            Spacer()
+            Button {
+                isPresentingAssign = true
+            } label: {
+                Text("Assign \(selectedIDs.count)…")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(AppTheme.charcoal, in: Capsule())
+            }
+            .buttonStyle(.plain)
+        }
+        .softCard(cardPadding: 12)
+    }
+
     @ViewBuilder
     private func rowContent(loc: LocationItem) -> some View {
         let isSelected = selectedIDs.contains(loc.id)
@@ -139,7 +177,7 @@ struct InboxView: View {
                     selectedIDs.insert(loc.id)
                 }
             } label: {
-                rowLabel(loc: loc, isSelected: isSelected, showCheckmark: true)
+                InboxLocationCard(location: loc, showCheckmark: true, isSelected: isSelected)
             }
             .buttonStyle(.plain)
             .contextMenu {
@@ -151,8 +189,9 @@ struct InboxView: View {
             }
         } else {
             NavigationLink(value: LocationDetailRoute(tripID: nil, locationID: loc.id)) {
-                rowLabel(loc: loc, isSelected: false, showCheckmark: false)
+                InboxLocationCard(location: loc)
             }
+            .buttonStyle(.plain)
             .contextMenu {
                 Button("Assign to trip…", action: assignContextMenu)
                 Button("Delete", role: .destructive) {
@@ -161,25 +200,31 @@ struct InboxView: View {
             }
         }
     }
+}
 
-    private func rowLabel(loc: LocationItem, isSelected: Bool, showCheckmark: Bool) -> some View {
-        HStack(spacing: 12) {
-            if showCheckmark {
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .font(.title2)
-                    .foregroundStyle(isSelected ? .primary : .secondary)
-            }
-            VStack(alignment: .leading, spacing: 4) {
-                Text(loc.name)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
-                if let notes = loc.notes, !notes.isEmpty {
-                    Text(notes)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            Spacer(minLength: 0)
-        }
+#Preview("Inbox — with data") {
+    PreviewShell.navigation {
+        InboxView()
+            .toolbar(.hidden, for: .navigationBar)
     }
+    .environmentObject(TravelStore.preview)
+    .appScreenBackground()
+}
+
+#Preview("Inbox — filtered") {
+    PreviewShell.navigation {
+        InboxView()
+            .toolbar(.hidden, for: .navigationBar)
+    }
+    .environmentObject(TravelStore.preview)
+    .appScreenBackground()
+}
+
+#Preview("Inbox — empty") {
+    PreviewShell.navigation {
+        InboxView()
+            .toolbar(.hidden, for: .navigationBar)
+    }
+    .environmentObject(PreviewData.emptyStore)
+    .appScreenBackground()
 }

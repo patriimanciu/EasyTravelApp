@@ -21,6 +21,7 @@ struct EasyTravelAppApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(store)
+                .tint(AppTheme.charcoal)
                 .onOpenURL { url in
                     // Expected format: easytravel://import?url=<sharedVideoURL>
                     if url.scheme?.lowercased() == "easytravel" {

@@ -400,3 +400,13 @@ struct PlanRouteSheet: View {
         }
     }
 }
+
+#Preview("Plan route") {
+    @Previewable @State var isPresented = true
+    PlanRouteSheet(
+        isPresented: $isPresented,
+        tripID: PreviewData.parisTripID,
+        trip: PreviewData.parisTrip
+    )
+    .environmentObject(TravelStore.preview)
+}

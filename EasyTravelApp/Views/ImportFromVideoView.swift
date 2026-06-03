@@ -216,3 +216,8 @@ struct ImportFromVideoView: View {
     }
 }
 
+#Preview("Import from video") {
+    @Previewable @State var isPresented = true
+    ImportFromVideoView(isPresented: $isPresented)
+        .environmentObject(TravelStore.preview)
+}

@@ -155,19 +155,7 @@ struct TripMapView: View {
     }
 
     private func tint(for category: LocationItem.Category) -> Color {
-        switch category {
-        case .landmark: .blue
-        case .museum: .purple
-        case .park: .green
-        case .neighborhood: .mint
-        case .city: .cyan
-        case .restaurant: .red
-        case .cafe: .orange
-        case .shopping: .pink
-        case .nightlife: .indigo
-        case .hotel: .teal
-        case .other: .gray
-        }
+        AppTheme.categoryTint(category)
     }
 
     @MainActor
@@ -337,4 +325,14 @@ private extension LocationItem {
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
+}
+
+#Preview("Map — all stops") {
+    TripMapView(trip: PreviewData.parisTrip, plannedDayIndex: nil)
+        .frame(height: 420)
+}
+
+#Preview("Map — day 1") {
+    TripMapView(trip: PreviewData.parisTrip, plannedDayIndex: 0)
+        .frame(height: 420)
 }

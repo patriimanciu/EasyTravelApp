@@ -320,9 +320,9 @@ async def process_video(request: VideoRequest):
     """
     run_id = uuid.uuid4().hex[:12]
     started = datetime.now(timezone.utc).isoformat()
-    bundle = await download_media_bundle(request.url)
-
+    bundle = None
     try:
+        bundle = await download_media_bundle(request.url)
         if not bundle.video_path and not bundle.audio_path:
             raise HTTPException(status_code=400, detail="No downloadable media path.")
 
@@ -453,4 +453,5 @@ async def process_video(request: VideoRequest):
         logger.exception("[%s] Pipeline error", run_id)
         raise HTTPException(status_code=500, detail=f"Server error: {str(e)}") from e
     finally:
-        cleanup_bundle(bundle)
+        if bundle is not None:
+            cleanup_bundle(bundle)

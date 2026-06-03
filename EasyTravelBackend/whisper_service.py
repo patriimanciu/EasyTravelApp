@@ -10,7 +10,7 @@ import asyncio
 import os
 from typing import Any
 
-from media_ingest import MediaBundle, cleanup_bundle, download_media_bundle
+from media_ingest import cleanup_bundle, download_media_bundle
 
 # Whisper model name is part of run provenance (NFR-07)
 WHISPER_MODEL_NAME = os.environ.get("WHISPER_MODEL", "base")

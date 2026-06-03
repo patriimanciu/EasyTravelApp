@@ -143,3 +143,13 @@ struct AccommodationSearchView: View {
         }
     }
 }
+
+#Preview("Accommodation search") {
+    AccommodationSearchView(
+        biasRegion: MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 48.8566, longitude: 2.3522),
+            span: MKCoordinateSpan(latitudeDelta: 0.15, longitudeDelta: 0.15)
+        ),
+        onPick: { _, _, _ in }
+    )
+}

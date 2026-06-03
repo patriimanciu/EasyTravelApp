@@ -13,6 +13,14 @@ final class TravelStore: ObservableObject {
         Task { await load() }
     }
 
+    /// Synchronous in-memory store for SwiftUI previews (skips disk load).
+    init(previewTrips: [Trip], previewInbox: [LocationItem] = []) {
+        trips = previewTrips
+        inbox = previewInbox
+    }
+
+    static var preview: TravelStore { PreviewData.store }
+
     func addTrip(name: String, startDate: Date? = nil, endDate: Date? = nil) {
         trips.insert(Trip(name: name, startDate: startDate, endDate: endDate), at: 0)
         persistAsync()

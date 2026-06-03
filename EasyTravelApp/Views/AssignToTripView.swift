@@ -37,3 +37,11 @@ struct AssignToTripView: View {
     }
 }
 
+#Preview("Assign to trip") {
+    @Previewable @State var isPresented = true
+    AssignToTripView(
+        isPresented: $isPresented,
+        selectedLocationIDs: Set(TravelStore.preview.inbox.map(\.id))
+    )
+    .environmentObject(TravelStore.preview)
+}

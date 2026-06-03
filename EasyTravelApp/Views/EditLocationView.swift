@@ -151,3 +151,12 @@ struct EditLocationView: View {
     }
 }
 
+#Preview("Edit location") {
+    PreviewShell.navigation {
+        EditLocationView(
+            locationID: PreviewData.parisLocationID,
+            tripID: PreviewData.parisTripID
+        )
+    }
+    .environmentObject(TravelStore.preview)
+}

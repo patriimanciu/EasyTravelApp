@@ -7,7 +7,6 @@ struct TripDetailView: View {
     @State private var isPresentingAddLocation = false
     @State private var isPresentingEditTrip = false
     @State private var isPresentingPlanRoute = false
-    @State private var selectedTab: Tab = .list
     @State private var listMode: ListMode = .byCategory
     /// Index into `sortedPlannedDays(trip)` for map + multi-day route list.
     @State private var mapSelectedDay: Int = 0
@@ -23,13 +22,6 @@ struct TripDetailView: View {
         var id: String { rawValue }
     }
 
-    enum Tab: String, CaseIterable, Identifiable {
-        case list = "List"
-        case map = "Map"
-
-        var id: String { rawValue }
-    }
-
     private var trip: Trip? {
         store.trips.first(where: { $0.id == tripID })
     }
@@ -38,61 +30,84 @@ struct TripDetailView: View {
         !(listMode == .routeOrder && isEditingRouteOrder && !(trip.plannedDays?.isEmpty ?? true))
     }
 
+    @ViewBuilder
+    private func tripActionBar(trip: Trip) -> some View {
+        HStack(spacing: 12) {
+            if trip.locations.count >= 2 {
+                Button {
+                    isPresentingPlanRoute = true
+                } label: {
+                    Label("Plan route", systemImage: "sparkles")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(AppTheme.charcoal, in: Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+
+            Spacer()
+
+            if listMode == .routeOrder, !(trip.plannedDays?.isEmpty ?? true) {
+                Button(isEditingRouteOrder ? "Done" : "Reorder") {
+                    isEditingRouteOrder.toggle()
+                }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AppTheme.charcoal)
+            }
+
+            Button {
+                isPresentingEditTrip = true
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.body)
+                    .frame(width: 40, height: 40)
+                    .background(AppTheme.elevatedFill, in: Circle())
+            }
+            .buttonStyle(.plain)
+
+            Button {
+                isPresentingAddLocation = true
+            } label: {
+                Image(systemName: "plus")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 40, height: 40)
+                    .background(AppTheme.charcoal, in: Circle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Add location")
+        }
+    }
+
     var body: some View {
         Group {
             if let trip {
                 VStack(spacing: 0) {
-                    Picker("View", selection: $selectedTab) {
-                        ForEach(Tab.allCases) { tab in
-                            Text(tab.rawValue).tag(tab)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
+                    TripHeroBanner(trip: trip)
 
-                    if selectedTab == .map {
-                        mapTabContent(trip: trip)
-                    } else {
+                    VStack(spacing: AppTheme.sectionSpacing) {
+                        tripActionBar(trip: trip)
+                            .padding(.horizontal, AppTheme.pagePadding)
+                            .padding(.top, 14)
+
                         tripListContent(trip: trip)
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .background(AppTheme.cardBackground)
+                    .clipShape(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: AppTheme.cornerRadius,
+                            topTrailingRadius: AppTheme.cornerRadius
+                        )
+                    )
+                    .offset(y: -AppTheme.tripHeroOverlap)
                 }
-                .navigationTitle(trip.name)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        if !trip.locations.isEmpty, trip.locations.count >= 2 {
-                            Button {
-                                isPresentingPlanRoute = true
-                            } label: {
-                                Label("Plan route", systemImage: "point.topleft.down.curvedto.point.bottomright.up")
-                            }
-                        }
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            isPresentingEditTrip = true
-                        } label: {
-                            Label("Trip settings", systemImage: "gearshape")
-                        }
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        if selectedTab == .list,
-                           listMode == .routeOrder,
-                           !(trip.plannedDays?.isEmpty ?? true) {
-                            Button(isEditingRouteOrder ? "Done" : "Reorder") {
-                                isEditingRouteOrder.toggle()
-                            }
-                        }
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            isPresentingAddLocation = true
-                        } label: {
-                            Image(systemName: "plus")
-                        }
-                        .accessibilityLabel("Add location")
-                    }
-                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .background(AppTheme.screenBackground.ignoresSafeArea())
+                .navigationBarBackButtonHidden(true)
+                .toolbar(.hidden, for: .navigationBar)
                 .sheet(isPresented: $isPresentingAddLocation) {
                     AddLocationView(tripID: tripID, isPresented: $isPresentingAddLocation)
                 }
@@ -109,11 +124,6 @@ struct TripDetailView: View {
                         mapSelectedDay = min(mapSelectedDay, max(0, newCount - 1))
                         listMode = .routeOrder
                     } else {
-                        mapSelectedDay = 0
-                    }
-                }
-                .onChange(of: selectedTab) { _, tab in
-                    if tab == .map, sortedPlannedDays(for: trip).count <= 1 {
                         mapSelectedDay = 0
                     }
                 }
@@ -156,6 +166,18 @@ struct TripDetailView: View {
         List {
             if !trip.locations.isEmpty {
                 Section {
+                    embeddedMapSection(trip: trip)
+                }
+                .listRowInsets(EdgeInsets(
+                    top: 0,
+                    leading: AppTheme.pagePadding,
+                    bottom: 8,
+                    trailing: AppTheme.pagePadding
+                ))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+
+                Section {
                     Picker("List mode", selection: $listMode) {
                         ForEach(ListMode.allCases) { mode in
                             Text(mode.rawValue).tag(mode)
@@ -163,6 +185,13 @@ struct TripDetailView: View {
                     }
                     .pickerStyle(.segmented)
                 }
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(
+                    top: 4,
+                    leading: AppTheme.pagePadding,
+                    bottom: 4,
+                    trailing: AppTheme.pagePadding
+                ))
             }
 
             if listMode == .byCategory {
@@ -171,6 +200,11 @@ struct TripDetailView: View {
                 routeOrderSections(trip: trip)
             }
         }
+        .listStyle(.plain)
+        .listSectionSpacing(AppTheme.sectionSpacing)
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.cardBackground)
+        .safeAreaPadding(.bottom, AppTheme.floatingTabClearance)
         .environment(
             \.editMode,
             .constant(
@@ -179,6 +213,39 @@ struct TripDetailView: View {
                     : .inactive
             )
         )
+    }
+
+    private var listRowInsets: EdgeInsets {
+        EdgeInsets(
+            top: AppTheme.listRowVerticalPadding,
+            leading: AppTheme.pagePadding,
+            bottom: AppTheme.listRowVerticalPadding,
+            trailing: AppTheme.pagePadding
+        )
+    }
+
+    @ViewBuilder
+    private func embeddedMapSection(trip: Trip) -> some View {
+        let planDays = sortedPlannedDays(for: trip)
+        VStack(alignment: .leading, spacing: 12) {
+            if planDays.isEmpty, trip.locations.count >= 2 {
+                AppTipBanner(
+                    text: "Plan your route to split stops across days — the map updates as you pick each day.",
+                    systemImage: "map"
+                )
+            }
+
+            if planDays.count > 1 {
+                mapDayChips(days: planDays, selection: $mapSelectedDay)
+            }
+
+            TripMapView(
+                trip: trip,
+                plannedDayIndex: planDays.isEmpty ? nil : mapSelectedDay
+            )
+            .frame(height: AppTheme.embeddedMapHeight)
+            .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius, style: .continuous))
+        }
     }
 
     @ViewBuilder
@@ -193,7 +260,9 @@ struct TripDetailView: View {
                     ForEach(group.locations) { loc in
                         NavigationLink(value: LocationDetailRoute(tripID: tripID, locationID: loc.id)) {
                             categoryListRow(loc: loc)
+                                .padding(.vertical, 4)
                         }
+                        .listRowInsets(listRowInsets)
                         .contextMenu {
                             priorityMenu(locationID: loc.id)
                         }
@@ -266,55 +335,19 @@ struct TripDetailView: View {
     }
 
     @ViewBuilder
-    private func mapTabContent(trip: Trip) -> some View {
-        let planDays = sortedPlannedDays(for: trip)
-        VStack(spacing: 0) {
-            if planDays.isEmpty, trip.locations.count >= 2 {
-                Text("Run Plan route, then Compute, to assign stops to each day and show one day at a time on the map.")
-                    .font(.caption)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.primary)
-                    .padding(10)
-                    .frame(maxWidth: .infinity)
-                    .background(Color(.secondarySystemBackground))
-            }
-            if planDays.count > 1 {
-                mapDayChips(days: planDays, selection: $mapSelectedDay)
-            } else if planDays.count == 1 {
-                Text("Day 1 (all planned stops)")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 6)
-            }
-            TripMapView(
-                trip: trip,
-                plannedDayIndex: planDays.isEmpty ? nil : mapSelectedDay
-            )
-        }
-    }
-
     private func mapDayChips(days: [TripPlannedDay], selection: Binding<Int>) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+            HStack(spacing: 10) {
                 ForEach(Array(days.enumerated()), id: \.offset) { idx, day in
-                    let isOn = selection.wrappedValue == idx
-                    Button {
+                    DayChip(
+                        title: "Day \(day.dayIndex + 1)",
+                        isSelected: selection.wrappedValue == idx
+                    ) {
                         selection.wrappedValue = idx
-                    } label: {
-                        Text("Day \(day.dayIndex + 1)")
-                            .font(.subheadline.weight(isOn ? .semibold : .regular))
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 8)
-                            .foregroundStyle(isOn ? Color.white : Color.primary)
-                            .background(isOn ? Color.accentColor : Color(.secondarySystemFill), in: Capsule())
                     }
-                    .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal)
         }
-        .padding(.top, 6)
     }
 
     private func sortedPlannedDays(for trip: Trip) -> [TripPlannedDay] {
@@ -384,7 +417,7 @@ struct TripDetailView: View {
                 Image(systemName: "plus.circle.fill")
                     .font(.title2)
                     .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(AppTheme.charcoal)
                     .frame(width: 36, height: 36)
             }
             .buttonStyle(.plain)
@@ -473,12 +506,25 @@ struct TripDetailView: View {
 
     @ViewBuilder
     private func categoryListRow(loc: LocationItem) -> some View {
-        VStack(alignment: .leading, spacing: 5) {
+        HStack(alignment: .top, spacing: AppTheme.rowSpacing) {
+            CategoryIconBadge(category: loc.category, size: 38)
+            locationDetailsColumn(loc: loc, showCategory: false)
+        }
+    }
+
+    private func locationDetailsColumn(loc: LocationItem, showCategory: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .firstTextBaseline) {
                 Text(loc.name)
                     .font(.headline)
                 Spacer(minLength: 8)
-                priorityBadge(loc.visitPriority)
+                PriorityPill(priority: loc.visitPriority)
+            }
+
+            if showCategory {
+                Text(loc.category.title)
+                    .font(.caption)
+                    .foregroundStyle(AppTheme.categoryTint(loc.category))
             }
 
             if let address = loc.address?.trimmingCharacters(in: .whitespacesAndNewlines), !address.isEmpty {
@@ -506,64 +552,18 @@ struct TripDetailView: View {
     }
 
     @ViewBuilder
-    private func priorityBadge(_ priority: LocationItem.VisitPriority) -> some View {
-        Text(priority.title)
-            .font(.caption2.weight(.semibold))
-            .foregroundStyle(priorityColor(priority))
-            .padding(.horizontal, 7)
-            .padding(.vertical, 3)
-            .background(priorityColor(priority).opacity(0.14), in: Capsule())
-    }
-
-    private func priorityColor(_ priority: LocationItem.VisitPriority) -> Color {
-        switch priority {
-        case .mustSee: .orange
-        case .high: .blue
-        case .normal: .secondary
-        case .ifTime: .mint
-        case .low: .gray
-        }
-    }
-
-    private func routeOrderListContent(loc: LocationItem) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(loc.name)
-                    .font(.headline)
-                Spacer(minLength: 8)
-                priorityBadge(loc.visitPriority)
-            }
-            Text(loc.category.title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            if let address = loc.address?.trimmingCharacters(in: .whitespacesAndNewlines), !address.isEmpty {
-                Text(address)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-    }
-
-    @ViewBuilder
     private func routeOrderRow(index: Int, loc: LocationItem) -> some View {
         HStack(alignment: .top, spacing: 10) {
-            Text("\(index)")
-                .font(.caption.weight(.bold))
-                .foregroundStyle(.secondary)
-                .frame(minWidth: 22, alignment: .leading)
-            routeOrderListContent(loc: loc)
+            RouteStopIndexBadge(label: "\(index)")
+            locationDetailsColumn(loc: loc, showCategory: true)
         }
     }
 
     @ViewBuilder
     private func routeOrderRow(index: String, loc: LocationItem) -> some View {
         HStack(alignment: .top, spacing: 10) {
-            Text(index)
-                .font(.caption.weight(.bold))
-                .foregroundStyle(.secondary)
-                .frame(minWidth: 22, alignment: .leading)
-            routeOrderListContent(loc: loc)
+            RouteStopIndexBadge(label: index)
+            locationDetailsColumn(loc: loc, showCategory: true)
         }
     }
 
@@ -575,3 +575,10 @@ struct TripDetailView: View {
     }
 }
 
+#Preview("Trip detail") {
+    PreviewShell.navigation {
+        TripDetailView(tripID: PreviewData.parisTripID)
+    }
+    .environmentObject(TravelStore.preview)
+    .appScreenBackground()
+}

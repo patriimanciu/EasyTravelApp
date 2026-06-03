@@ -716,4 +716,10 @@ enum SampleTrips {
             ),
         ]
     }
+
+    /// Inbox rows for SwiftUI previews.
+    static var previewInbox: [LocationItem] {
+        guard let paris = make().first else { return [] }
+        return Array(paris.locations.prefix(5))
+    }
 }

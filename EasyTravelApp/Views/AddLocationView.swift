@@ -123,3 +123,8 @@ struct AddLocationView: View {
     }
 }
 
+#Preview("Add location") {
+    @Previewable @State var isPresented = true
+    AddLocationView(tripID: PreviewData.parisTripID, isPresented: $isPresented)
+        .environmentObject(TravelStore.preview)
+}

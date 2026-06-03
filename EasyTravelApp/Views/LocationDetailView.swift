@@ -22,22 +22,7 @@ struct LocationDetailView: View {
     var body: some View {
         Group {
             if let loc = currentLocation, initialLocation != nil {
-                Form {
-                    placeSection(loc: loc)
-                    detailsSection(loc: loc)
-                    notesSection(loc: loc)
-                    mapSection(loc: loc)
-                }
-                .navigationTitle("Location")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        NavigationLink("Edit") {
-                            EditLocationView(locationID: locationID, tripID: tripID)
-                                .environmentObject(store)
-                        }
-                        .fontWeight(.semibold)
-                    }
-                }
+                locationScrollContent(loc: loc)
             } else {
                 ContentUnavailableView("Location not found", systemImage: "mappin.slash")
             }
@@ -46,74 +31,146 @@ struct LocationDetailView: View {
         .onChange(of: currentLocation?.id) { _, _ in loadFromStore() }
     }
 
-    @ViewBuilder
-    private func placeSection(loc: LocationItem) -> some View {
-        Section {
-            Text(loc.name)
-                .font(.headline)
-            Text(loc.category.title)
-                .foregroundStyle(.secondary)
-        } header: {
-            Text("Place")
+    private func locationScrollContent(loc: LocationItem) -> some View {
+        ScrollView {
+            locationCardsStack(loc: loc)
+                    .appPagePadding()
+                    .padding(.vertical, 20)
+                    .padding(.bottom, 24)
+        }
+        .appScreenBackground()
+        .navigationTitle("Location")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink("Edit") {
+                    EditLocationView(locationID: locationID, tripID: tripID)
+                        .environmentObject(store)
+                }
+                .fontWeight(.semibold)
+            }
         }
     }
 
     @ViewBuilder
+    private func locationCardsStack(loc: LocationItem) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            placeSection(loc: loc).softCard()
+            detailsSection(loc: loc).softCard()
+            if hasNotes(loc) {
+                notesSection(loc: loc).softCard()
+            }
+            mapSection(loc: loc).softCard(cardPadding: 0)
+        }
+    }
+
+    private func hasNotes(_ loc: LocationItem) -> Bool {
+        guard let notes = loc.notes?.trimmingCharacters(in: .whitespacesAndNewlines) else { return false }
+        return !notes.isEmpty
+    }
+
+    @ViewBuilder
+    private func placeSection(loc: LocationItem) -> some View {
+        HStack(alignment: .center, spacing: 14) {
+            CategoryIconBadge(category: loc.category, size: 52)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(loc.name)
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(AppTheme.charcoal)
+                Text(loc.category.title)
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.categoryTint(loc.category))
+            }
+            Spacer(minLength: 0)
+        }
+    }
+
     private func detailsSection(loc: LocationItem) -> some View {
-        Section {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Details")
+                .font(.headline)
+                .foregroundStyle(AppTheme.charcoal)
             if let address = loc.address, !address.isEmpty {
-                LabeledContent("Address", value: address)
+                detailRow(label: "Address", value: address)
             }
             if let phone = loc.phoneNumber, !phone.isEmpty {
-                LabeledContent("Phone", value: phone)
+                detailRow(label: "Phone", value: phone)
             }
             if let url = loc.url, !url.isEmpty {
-                LabeledContent("Website", value: url)
+                detailRow(label: "Website", value: url)
             }
+            openingHoursContent(loc: loc)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
 
-            let summary = OpeningHoursFormatter.summary(openingHours: loc.openingHours, category: loc.category)
-            if summary != "—" {
-                LabeledContent("Opening hours", value: summary)
-            }
+    @ViewBuilder
+    private func openingHoursContent(loc: LocationItem) -> some View {
+        let summary = openingHoursSummary(loc)
+        if summary != "—" {
+            detailRow(label: "Hours", value: summary)
+        }
+        let lines = openingHoursLines(loc)
+        if !lines.isEmpty {
+            openingHoursLineRows(lines)
+        }
+    }
 
-            let lines = OpeningHoursFormatter.displayLines(openingHours: loc.openingHours, category: loc.category)
-            if !lines.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
-                    ForEach(lines, id: \.self) { line in
-                        Text(line)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                }
+    private func openingHoursSummary(_ loc: LocationItem) -> String {
+        OpeningHoursFormatter.summary(openingHours: loc.openingHours, category: loc.category)
+    }
+
+    private func openingHoursLines(_ loc: LocationItem) -> [String] {
+        OpeningHoursFormatter.displayLines(openingHours: loc.openingHours, category: loc.category)
+    }
+
+    private func openingHoursLineRows(_ lines: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            ForEach(lines, id: \.self) { line in
+                Text(line)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
             }
-        } header: {
-            Text("Details")
+        }
+    }
+
+    private func detailRow(label: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(label)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+            Text(value)
+                .font(.subheadline)
         }
     }
 
     @ViewBuilder
     private func notesSection(loc: LocationItem) -> some View {
-        Section {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Notes")
+                .font(.headline)
+                .foregroundStyle(AppTheme.charcoal)
             if let notes = loc.notes, !notes.isEmpty {
                 Text(notes)
-            } else {
-                Text("No notes yet.")
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
-        } header: {
-            Text("Notes")
-        } footer: {
-            Text("Add your plans or ideas for this spot.")
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     @ViewBuilder
     private func mapSection(loc: LocationItem) -> some View {
-        Section {
-            MiniMapView(latitude: loc.latitude, longitude: loc.longitude, name: loc.name)
-                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-        } header: {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Map")
+                .font(.headline)
+                .foregroundStyle(AppTheme.charcoal)
+                .padding(.horizontal, AppTheme.cardPadding)
+                .padding(.top, AppTheme.cardPadding)
+            MiniMapView(latitude: loc.latitude, longitude: loc.longitude, name: loc.name)
+                .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius - 4, style: .continuous))
+                .padding(.horizontal, 8)
+                .padding(.bottom, 8)
         }
     }
 
@@ -143,7 +200,37 @@ struct MiniMapView: View {
                     .foregroundStyle(.red)
             }
         }
-        .frame(height: 160)
+        .frame(height: 180)
         .allowsHitTesting(false)
     }
+}
+
+#Preview("Location detail — trip") {
+    PreviewShell.navigation {
+        LocationDetailView(
+            locationID: PreviewData.parisLocationID,
+            tripID: PreviewData.parisTripID
+        )
+    }
+    .environmentObject(TravelStore.preview)
+}
+
+#Preview("Location detail — inbox") {
+    PreviewShell.navigation {
+        LocationDetailView(
+            locationID: PreviewData.inboxLocationID,
+            tripID: nil
+        )
+    }
+    .environmentObject(TravelStore.preview)
+}
+
+#Preview("Mini map") {
+    MiniMapView(
+        latitude: PreviewData.parisLocation.latitude,
+        longitude: PreviewData.parisLocation.longitude,
+        name: PreviewData.parisLocation.name
+    )
+    .softCard(cardPadding: 0)
+    .padding()
 }

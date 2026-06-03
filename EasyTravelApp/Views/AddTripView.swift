@@ -47,3 +47,8 @@ struct AddTripView: View {
     }
 }
 
+#Preview("Add trip") {
+    @Previewable @State var isPresented = true
+    AddTripView(isPresented: $isPresented)
+        .environmentObject(TravelStore.preview)
+}
