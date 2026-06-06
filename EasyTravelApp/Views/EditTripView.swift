@@ -7,6 +7,8 @@ struct EditTripView: View {
     let tripID: Trip.ID
 
     @State private var name: String = ""
+    @State private var country: String = ""
+    @State private var city: String = ""
     @State private var includeDates = false
     @State private var startDate = Date()
     @State private var endDate = Date()
@@ -37,83 +39,99 @@ struct EditTripView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Trip") {
-                    TextField("Name", text: $name)
-                        .textInputAutocapitalization(.words)
-
-                    Toggle("Trip dates", isOn: $includeDates)
-
-                    if includeDates {
-                        DatePicker("Start", selection: $startDate, displayedComponents: [.date])
-                        DatePicker("End", selection: $endDate, displayedComponents: [.date])
-                    }
-                }
-
-                Section {
-                    Toggle("Accommodation (daily hub)", isOn: $includeStay)
-                    if includeStay {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Stay")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Text(stayName.isEmpty ? "Not chosen yet" : stayName)
-                                    .font(.body)
-                            }
-                            Spacer()
-                            Button("Search maps…") {
-                                isPresentingStaySearch = true
-                            }
-                            .buttonStyle(.borderedProminent)
+            ScrollView {
+                VStack(alignment: .leading, spacing: AppTheme.sectionSpacing) {
+                    AppFormSection(
+                        title: "Trip",
+                        footer: "Country is required. City is optional. All stops use these values for Maps search when you add locations."
+                    ) {
+                        AppFormField(label: "Name", placeholder: "Trip name", text: $name, autocapitalizeWords: true)
+                        AppFormField(label: "Country", placeholder: "Required", text: $country, autocapitalizeWords: true)
+                        AppFormField(label: "City", placeholder: "Optional", text: $city, autocapitalizeWords: true)
+                        Toggle("Trip dates", isOn: $includeDates)
+                        if includeDates {
+                            DatePicker("Start", selection: $startDate, displayedComponents: [.date])
+                            DatePicker("End", selection: $endDate, displayedComponents: [.date])
                         }
-                        if let lat = Double(stayLatText.replacingOccurrences(of: ",", with: ".")),
-                           let lon = Double(stayLonText.replacingOccurrences(of: ",", with: ".")),
-                           !stayLatText.isEmpty
-                        {
-                            Text(String(format: "Coordinates %.5f, %.5f", lat, lon))
-                                .font(.caption2)
-                                .foregroundStyle(.tertiary)
-                        }
-                        TextField("Display name (optional edit)", text: $stayName)
-                            .textInputAutocapitalization(.words)
                     }
-                } header: {
-                    Text("Where you stay")
-                } footer: {
-                    Text(
-                        includeStay
+
+                    AppFormSection(
+                        title: "Where you stay",
+                        footer: includeStay
                             ? "Search picks a place from Apple Maps; planning uses walking paths from OSRM, starting and ending each day at this hub."
                             : "Optional. When set, routing assumes you start and end each day here."
-                    )
-                    .font(.footnote)
-                }
+                    ) {
+                        Toggle("Accommodation (daily hub)", isOn: $includeStay)
+                        if includeStay {
+                            VStack(alignment: .leading, spacing: 10) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Stay")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                    Text(stayName.isEmpty ? "Not chosen yet" : stayName)
+                                        .font(.body)
+                                        .foregroundStyle(AppTheme.charcoal)
+                                }
+                                Button {
+                                    isPresentingStaySearch = true
+                                } label: {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "magnifyingglass")
+                                        Text("Search maps…")
+                                    }
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 12)
+                                    .foregroundStyle(.white)
+                                    .background(AppTheme.charcoal, in: RoundedRectangle(cornerRadius: AppTheme.pillRadius, style: .continuous))
+                                }
+                                .buttonStyle(.plain)
 
-                if includeDates || includeStay {
-                    Section {
-                        Text("Changing trip dates or accommodation clears a saved route plan.")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
+                                if let lat = Double(stayLatText.replacingOccurrences(of: ",", with: ".")),
+                                   let lon = Double(stayLonText.replacingOccurrences(of: ",", with: ".")),
+                                   !stayLatText.isEmpty
+                                {
+                                    Text(String(format: "Coordinates %.5f, %.5f", lat, lon))
+                                        .font(.caption2)
+                                        .foregroundStyle(.tertiary)
+                                }
+                                TextField("Display name (optional edit)", text: $stayName)
+                                    .textInputAutocapitalization(.words)
+                            }
+                        }
+                    }
+
+                    if includeDates || includeStay {
+                        AppTipBanner(
+                            text: "Changing trip dates or accommodation clears a saved route plan.",
+                            systemImage: "info.circle"
+                        )
                     }
                 }
+                .appPagePadding()
+                .padding(.top, 8)
+                .padding(.bottom, 24)
             }
+            .scrollDismissesKeyboard(.interactively)
+            .appScreenBackground()
             .navigationTitle("Trip settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { isPresented = false }
+                        .foregroundStyle(AppTheme.charcoal)
                 }
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         save()
                         isPresented = false
                     }
+                    .fontWeight(.semibold)
                     .disabled(!canSave)
                 }
             }
-            .onAppear {
-                syncFromStore()
-            }
+            .tint(AppTheme.charcoal)
+            .onAppear { syncFromStore() }
             .sheet(isPresented: $isPresentingStaySearch) {
                 AccommodationSearchView(
                     biasRegion: staySearchBiasRegion,
@@ -129,7 +147,8 @@ struct EditTripView: View {
 
     private var canSave: Bool {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return false }
+        let trimmedCountry = country.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !trimmedCountry.isEmpty else { return false }
         if includeStay {
             let n = stayName.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !n.isEmpty else { return false }
@@ -144,6 +163,8 @@ struct EditTripView: View {
     private func syncFromStore() {
         guard let t = trip else { return }
         name = t.name
+        country = t.country
+        city = t.city ?? ""
         if let s = t.startDate, let e = t.endDate {
             includeDates = true
             startDate = s
@@ -168,7 +189,10 @@ struct EditTripView: View {
 
     private func save() {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
+        let trimmedCountry = country.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !trimmedCountry.isEmpty else { return }
+        let trimmedCity = city.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cityValue = trimmedCity.isEmpty ? nil : trimmedCity
 
         let acc: TripAccommodation?
         if includeStay,
@@ -187,9 +211,15 @@ struct EditTripView: View {
             let s = cal.startOfDay(for: startDate)
             var e = cal.startOfDay(for: endDate)
             if e < s { e = s }
-            store.updateTripMetadata(id: tripID, name: trimmed, startDate: s, endDate: e, accommodation: acc)
+            store.updateTripMetadata(
+                id: tripID, name: trimmed, country: trimmedCountry, city: cityValue,
+                startDate: s, endDate: e, accommodation: acc
+            )
         } else {
-            store.updateTripMetadata(id: tripID, name: trimmed, startDate: nil, endDate: nil, accommodation: acc)
+            store.updateTripMetadata(
+                id: tripID, name: trimmed, country: trimmedCountry, city: cityValue,
+                startDate: nil, endDate: nil, accommodation: acc
+            )
         }
     }
 }

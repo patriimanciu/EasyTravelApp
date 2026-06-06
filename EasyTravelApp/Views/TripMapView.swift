@@ -53,13 +53,18 @@ struct TripMapView: View {
     @State private var position: MapCameraPosition = .automatic
     /// Single merged MapKit **walking** polyline (hub → stops → hub when accommodation is set).
     @State private var roadRouteCoordinates: [CLLocationCoordinate2D] = []
+    @State private var isRouteUpdating = false
 
     private var sortedPlannedDays: [TripPlannedDay] {
         (trip.plannedDays ?? []).sorted { $0.dayIndex < $1.dayIndex }
     }
 
     private var usesPerDayPlan: Bool {
-        !sortedPlannedDays.isEmpty && plannedDayIndex != nil
+        trip.hasItineraryDates && !sortedPlannedDays.isEmpty && plannedDayIndex != nil
+    }
+
+    private var shouldGenerateRoute: Bool {
+        trip.hasItineraryDates && displayStops.count >= 2
     }
 
     private var activePlannedDay: TripPlannedDay? {
@@ -99,7 +104,8 @@ struct TripMapView: View {
         let wp = routingWaypoints.map { "\(String(format: "%.6f", $0.latitude)),\(String(format: "%.6f", $0.longitude))" }
             .joined(separator: "|")
         let ids = displayStops.map(\.id.uuidString).joined(separator: ",")
-        return "\(dayPart)|\(acc)|mk-walk-v4|\(wp)|\(ids)"
+        let datesPart = trip.hasItineraryDates ? "dates:yes" : "dates:no"
+        return "\(dayPart)|\(datesPart)|\(acc)|mk-walk-v4|\(wp)|\(ids)"
     }
 
     private var accommodationCoordinate: CLLocationCoordinate2D? {
@@ -107,9 +113,16 @@ struct TripMapView: View {
         return CLLocationCoordinate2D(latitude: a.latitude, longitude: a.longitude)
     }
 
+    private var routeLoadingMessage: String {
+        if usesPerDayPlan, let idx = plannedDayIndex {
+            return "Loading Day \(idx + 1)…"
+        }
+        return "Updating route…"
+    }
+
     var body: some View {
         Map(position: $position) {
-            if roadRouteCoordinates.count >= 2 {
+            if shouldGenerateRoute, !isRouteUpdating, roadRouteCoordinates.count >= 2 {
                 MapPolyline(coordinates: roadRouteCoordinates)
                     .stroke(.blue.opacity(0.82), lineWidth: 4)
             }
@@ -146,12 +159,49 @@ struct TripMapView: View {
             MapUserLocationButton()
             MapScaleView()
         }
+        .overlay {
+            if isRouteUpdating {
+                mapLoadingOverlay
+            }
+        }
+        .allowsHitTesting(!isRouteUpdating)
         .task(id: routeSignature) {
+            roadRouteCoordinates = []
+            position = cameraPositionFittingDisplay()
+            guard shouldGenerateRoute else {
+                isRouteUpdating = false
+                return
+            }
+            isRouteUpdating = true
             await rebuildFallbackRoadRoutesIfNeeded()
+            guard !Task.isCancelled else { return }
+            isRouteUpdating = false
         }
         .onAppear {
-            position = cameraPositionFittingDisplay()
+            if !isRouteUpdating {
+                position = cameraPositionFittingDisplay()
+            }
         }
+    }
+
+    /// Covers only the embedded map frame (parent sets height + corner clip).
+    private var mapLoadingOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.08)
+            VStack(spacing: 8) {
+                ProgressView()
+                    .controlSize(.regular)
+                Text(routeLoadingMessage)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(AppTheme.charcoal.opacity(0.8))
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(routeLoadingMessage)
     }
 
     private func tint(for category: LocationItem.Category) -> Color {
@@ -206,8 +256,14 @@ struct TripMapView: View {
         if Task.isCancelled { return nil }
 
         let request = MKDirections.Request()
-        request.source = MKMapItem(placemark: MKPlacemark(coordinate: from))
-        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: to))
+        request.source = MKMapItem(
+            location: CLLocation(latitude: from.latitude, longitude: from.longitude),
+            address: nil
+        )
+        request.destination = MKMapItem(
+            location: CLLocation(latitude: to.latitude, longitude: to.longitude),
+            address: nil
+        )
         request.transportType = .walking
         request.requestsAlternateRoutes = true
         // Walking-specific hints; MapKit may ignore some for non-driving modes.

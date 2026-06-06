@@ -8,22 +8,45 @@ struct InboxView: View {
     @State private var isPresentingAssign = false
     @State private var confirmBulkDelete = false
     @State private var isPresentingImport = false
+    @State private var isPresentingAddLocation = false
     @State private var categoryFilter: LocationItem.Category?
+    @State private var countryFilter: String?
+
+    private var allFilteredSelected: Bool {
+        !filteredInbox.isEmpty && filteredInbox.allSatisfy { selectedIDs.contains($0.id) }
+    }
+
+    private var inboxCountries: [String] {
+        let names = store.inbox.compactMap(\.trimmedInboxCountry)
+        return Array(Set(names)).sorted()
+    }
+
+    private var filteredInbox: [LocationItem] {
+        store.inbox.filter { loc in
+            if let countryFilter {
+                guard loc.trimmedInboxCountry == countryFilter else { return false }
+            }
+            if let categoryFilter, loc.category != categoryFilter {
+                return false
+            }
+            return true
+        }
+    }
 
     private var groupedInbox: [(category: LocationItem.Category, locations: [LocationItem])] {
-        let groups = Dictionary(grouping: store.inbox, by: { $0.category })
+        let groups = Dictionary(grouping: filteredInbox, by: { $0.category })
         return groups
             .map { (category: $0.key, locations: $0.value.sorted(by: { $0.createdAt > $1.createdAt })) }
             .sorted(by: { $0.category.sortRank < $1.category.sortRank })
     }
 
-    private var displayedGroups: [(category: LocationItem.Category, locations: [LocationItem])] {
-        guard let categoryFilter else { return groupedInbox }
-        return groupedInbox.filter { $0.category == categoryFilter }
-    }
-
-    private var visibleLocationCount: Int {
-        displayedGroups.reduce(0) { $0 + $1.locations.count }
+    private var listSectionTitle: String {
+        switch (countryFilter, categoryFilter) {
+        case (let c?, let cat?): return "\(c) · \(cat.title)"
+        case (let c?, nil): return c
+        case (nil, let cat?): return cat.title
+        case (nil, nil): return "All places"
+        }
     }
 
     var body: some View {
@@ -32,7 +55,8 @@ struct InboxView: View {
                 HomeHeaderView(
                     greeting: "Inbox",
                     subtitle: "Saved places",
-                    onAddTrip: nil
+                    onAddTrip: { isPresentingAddLocation = true },
+                    addButtonAccessibilityLabel: "Add place"
                 )
                 .padding(.top, 8)
 
@@ -41,15 +65,32 @@ struct InboxView: View {
                 }
 
                 if !store.inbox.isEmpty {
+                    if !inboxCountries.isEmpty {
+                        CountryFilterScroll(countries: inboxCountries, selectedCountry: $countryFilter)
+                            .padding(.horizontal, -AppTheme.pagePadding)
+                    }
+
                     CategoryFilterScroll(selectedCategory: $categoryFilter)
                         .padding(.horizontal, -AppTheme.pagePadding)
 
-                    HStack {
+                    HStack(spacing: 12) {
                         SectionTitle(
-                            title: categoryFilter?.title ?? "All places",
-                            trailing: "\(visibleLocationCount)"
+                            title: listSectionTitle,
+                            trailing: "\(filteredInbox.count)"
                         )
                         Spacer()
+                        if isSelectionMode, !filteredInbox.isEmpty {
+                            Button(allFilteredSelected ? "Deselect all" : "Select all") {
+                                let visibleIDs = Set(filteredInbox.map(\.id))
+                                if allFilteredSelected {
+                                    selectedIDs.subtract(visibleIDs)
+                                } else {
+                                    selectedIDs.formUnion(visibleIDs)
+                                }
+                            }
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(AppTheme.charcoal)
+                        }
                         Button(isSelectionMode ? "Done" : "Select") {
                             if isSelectionMode {
                                 isSelectionMode = false
@@ -71,16 +112,16 @@ struct InboxView: View {
                     AppEmptyState(
                         title: "Nothing in Inbox",
                         systemImage: "tray",
-                        message: "Import from a video to collect places before adding them to a trip."
+                        message: "Import from a video or tap + to add a place manually, then assign it to a trip."
                     )
-                } else if displayedGroups.isEmpty {
+                } else if filteredInbox.isEmpty {
                     AppEmptyState(
                         title: "No matches",
-                        systemImage: categoryFilter?.symbolName ?? "line.3.horizontal.decrease.circle",
-                        message: "No inbox places in this category. Try another filter or choose All."
+                        systemImage: "line.3.horizontal.decrease.circle",
+                        message: emptyFilterMessage
                     )
                 } else {
-                    ForEach(displayedGroups, id: \.category) { group in
+                    ForEach(groupedInbox, id: \.category) { group in
                         VStack(alignment: .leading, spacing: 16) {
                             if categoryFilter == nil {
                                 HStack(spacing: 8) {
@@ -115,6 +156,7 @@ struct InboxView: View {
                 if store.inbox.isEmpty {
                     isSelectionMode = false
                     categoryFilter = nil
+                    countryFilter = nil
                 }
             }
             Button("Cancel", role: .cancel) {}
@@ -126,16 +168,38 @@ struct InboxView: View {
         .sheet(isPresented: $isPresentingImport) {
             ImportFromVideoView(isPresented: $isPresentingImport)
         }
+        .sheet(isPresented: $isPresentingAddLocation) {
+            AddInboxLocationView(isPresented: $isPresentingAddLocation)
+                .environmentObject(store)
+        }
         .onChange(of: isPresentingAssign) { _, isPresented in
             if !isPresented {
                 selectedIDs = []
                 isSelectionMode = false
             }
         }
+        .onChange(of: store.inbox.count) { _, count in
+            if count == 0 {
+                countryFilter = nil
+                categoryFilter = nil
+            } else if let countryFilter, !inboxCountries.contains(countryFilter) {
+                self.countryFilter = nil
+            }
+        }
         .navigationDestination(for: LocationDetailRoute.self) { route in
             LocationDetailView(locationID: route.locationID, tripID: route.tripID)
                 .environmentObject(store)
         }
+    }
+
+    private var emptyFilterMessage: String {
+        if countryFilter != nil, categoryFilter != nil {
+            return "No inbox places match this country and category. Try another filter or choose All."
+        }
+        if countryFilter != nil {
+            return "No inbox places in this country. Try another country or choose All."
+        }
+        return "No inbox places in this category. Try another filter or choose All."
     }
 
     private var selectionActionBar: some View {

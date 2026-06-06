@@ -197,6 +197,8 @@ enum SampleTrips {
         [
             Trip(
                 name: "Paris",
+                country: "France",
+                city: "Paris",
                 startDate: parisTripStart,
                 endDate: parisTripEnd,
                 accommodation: TripAccommodation(
@@ -607,6 +609,8 @@ enum SampleTrips {
             ),
             Trip(
                 name: "London",
+                country: "United Kingdom",
+                city: "London",
                 startDate: londonTripStart,
                 endDate: londonTripEnd,
                 accommodation: TripAccommodation(
@@ -664,6 +668,8 @@ enum SampleTrips {
             ),
             Trip(
                 name: "Barcelona",
+                country: "Spain",
+                city: "Barcelona",
                 startDate: nil,
                 endDate: nil,
                 locations: [
@@ -720,6 +726,11 @@ enum SampleTrips {
     /// Inbox rows for SwiftUI previews.
     static var previewInbox: [LocationItem] {
         guard let paris = make().first else { return [] }
-        return Array(paris.locations.prefix(5))
+        return Array(paris.locations.prefix(5)).map { loc in
+            var copy = loc
+            copy.country = "France"
+            copy.city = "Paris"
+            return copy
+        }
     }
 }

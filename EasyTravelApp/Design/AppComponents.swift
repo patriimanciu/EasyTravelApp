@@ -6,6 +6,7 @@ struct HomeHeaderView: View {
     var greeting: String = "Hello"
     var subtitle: String = "Where to next?"
     var onAddTrip: (() -> Void)?
+    var addButtonAccessibilityLabel: String = "Add trip"
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
@@ -44,15 +45,13 @@ struct HomeHeaderView: View {
                         .shadow(color: AppTheme.cardShadow, radius: 8, x: 0, y: 4)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Add trip")
+                .accessibilityLabel(addButtonAccessibilityLabel)
             }
         }
     }
 }
 
 struct PlanHeroCard: View {
-    var action: () -> Void
-
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(alignment: .top) {
@@ -60,7 +59,7 @@ struct PlanHeroCard: View {
                     Text("Plan smarter")
                         .font(.title2.weight(.bold))
                         .foregroundStyle(AppTheme.charcoal)
-                    Text("Import a travel video or build a trip, then let AI split stops across days.")
+                    Text("Import a video or build a trip, then let AI split stops across days.")
                         .font(.subheadline)
                         .foregroundStyle(AppTheme.charcoal.opacity(0.65))
                         .fixedSize(horizontal: false, vertical: true)
@@ -69,23 +68,18 @@ struct PlanHeroCard: View {
                 heroIllustration
             }
 
-            Button(action: action) {
-                HStack(spacing: 10) {
-                    Image(systemName: "sparkles")
-                        .font(.body.weight(.semibold))
-                    Text("Start plan with AI")
-                        .font(.subheadline.weight(.semibold))
-                    Spacer()
-                    Image(systemName: "arrow.right")
-                        .font(.caption.weight(.bold))
-                }
-                .foregroundStyle(AppTheme.charcoal)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 14)
-                .background(Color.white, in: RoundedRectangle(cornerRadius: AppTheme.pillRadius, style: .continuous))
-                .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 3)
+            HStack(spacing: 10) {
+                Image(systemName: "sparkles")
+                    .font(.body.weight(.semibold))
+                Text("Open a trip to start planning")
+                    .font(.subheadline.weight(.medium))
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
             }
-            .buttonStyle(.plain)
+            .foregroundStyle(AppTheme.charcoal.opacity(0.72))
+            .padding(.horizontal, 18)
+            .padding(.vertical, 14)
+            .background(Color.white.opacity(0.72), in: RoundedRectangle(cornerRadius: AppTheme.pillRadius, style: .continuous))
         }
         .padding(AppTheme.cardPadding + 4)
         .background(
@@ -97,6 +91,8 @@ struct PlanHeroCard: View {
             in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius + 4, style: .continuous)
         )
         .shadow(color: AppTheme.peachDeep.opacity(0.35), radius: 16, x: 0, y: 8)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Plan smarter. Import a travel video or build a trip, then use Plan route inside a trip to split stops across days.")
     }
 
     private var heroIllustration: some View {
@@ -234,6 +230,89 @@ struct CategoryFilterScroll: View {
     }
 }
 
+struct CountryFilterScroll: View {
+    let countries: [String]
+    @Binding var selectedCountry: String?
+
+    private var chipSize: CGFloat { AppTheme.categoryChipSize }
+
+    var body: some View {
+        ZStack(alignment: .trailing) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 16) {
+                    countryChip(
+                        title: "All",
+                        symbolName: "square.grid.2x2",
+                        tint: AppTheme.charcoal,
+                        fill: AppTheme.elevatedFill,
+                        isSelected: selectedCountry == nil
+                    ) {
+                        selectedCountry = nil
+                    }
+                    ForEach(countries, id: \.self) { country in
+                        countryChip(
+                            title: country,
+                            symbolName: "globe.americas.fill",
+                            tint: AppTheme.categoryTint(.city),
+                            fill: AppTheme.categoryPastelFill(.city),
+                            isSelected: selectedCountry == country
+                        ) {
+                            selectedCountry = country
+                        }
+                    }
+                }
+                .padding(.leading, AppTheme.pagePadding)
+                .padding(.trailing, AppTheme.pagePadding + chipSize * 0.35)
+            }
+
+            LinearGradient(
+                colors: [AppTheme.screenBackground.opacity(0), AppTheme.screenBackground],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            .frame(width: 36)
+            .allowsHitTesting(false)
+        }
+    }
+
+    private func countryChip(
+        title: String,
+        symbolName: String,
+        tint: Color,
+        fill: Color,
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(spacing: 9) {
+                ZStack {
+                    Circle()
+                        .fill(fill)
+                        .frame(width: chipSize, height: chipSize)
+                    Image(systemName: symbolName)
+                        .font(.system(size: chipSize * 0.34, weight: .semibold))
+                        .foregroundStyle(tint)
+                }
+                .overlay {
+                    if isSelected {
+                        Circle()
+                            .strokeBorder(AppTheme.charcoal, lineWidth: 2.5)
+                            .frame(width: chipSize, height: chipSize)
+                    }
+                }
+                Text(title)
+                    .font(.caption.weight(isSelected ? .semibold : .medium))
+                    .foregroundStyle(isSelected ? AppTheme.charcoal : .secondary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+                    .frame(width: chipSize + 12)
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+}
+
 struct SectionTitle: View {
     let title: String
     var trailing: String?
@@ -250,6 +329,531 @@ struct SectionTitle: View {
                     .foregroundStyle(.secondary)
             }
         }
+    }
+}
+
+// MARK: - Video import banner
+
+struct VideoImportTopBanner: View {
+    let phase: VideoImportPhase
+    var onDismiss: (() -> Void)?
+    var onOpenInbox: (() -> Void)?
+
+    var body: some View {
+        switch phase {
+        case .idle:
+            EmptyView()
+        case .running(let message, let progress):
+            bannerShell(showProgress: true, progress: progress, tint: AppTheme.charcoal) {
+                HStack(alignment: .top, spacing: 10) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text(message)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(AppTheme.charcoal)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                }
+            }
+        case .success(let count):
+            bannerShell(showProgress: false, progress: 1, tint: Color(red: 0.28, green: 0.62, blue: 0.48)) {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(Color(red: 0.28, green: 0.62, blue: 0.48))
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Added to Inbox")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(AppTheme.charcoal)
+                        Text(
+                            count == 1
+                                ? "1 location is ready — assign it to a trip when you like."
+                                : "\(count) locations are ready — assign them to a trip when you like."
+                        )
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer(minLength: 0)
+                    bannerDismissButton
+                }
+            }
+            .onTapGesture {
+                onOpenInbox?()
+            }
+        case .failure(let message):
+            bannerShell(showProgress: false, progress: nil, tint: Color(red: 0.92, green: 0.35, blue: 0.32)) {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(Color(red: 0.92, green: 0.35, blue: 0.32))
+                    Text(message)
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.charcoal)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                    bannerDismissButton
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var bannerDismissButton: some View {
+        if let onDismiss {
+            Button(action: onDismiss) {
+                Image(systemName: "xmark")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.secondary)
+                    .padding(8)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Dismiss")
+        }
+    }
+
+    @ViewBuilder
+    private func bannerShell<Content: View>(
+        showProgress: Bool,
+        progress: Double?,
+        tint: Color,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(spacing: 0) {
+            if showProgress {
+                Group {
+                    if let progress {
+                        ProgressView(value: min(1, max(0, progress)))
+                            .progressViewStyle(.linear)
+                    } else {
+                        ProgressView()
+                            .progressViewStyle(.linear)
+                    }
+                }
+                .tint(tint)
+                .frame(height: 4)
+            }
+            content()
+                .padding(.horizontal, AppTheme.pagePadding)
+                .padding(.vertical, 12)
+        }
+        .frame(maxWidth: .infinity)
+        .background(AppTheme.cardBackground)
+        .shadow(color: AppTheme.cardShadow, radius: 8, x: 0, y: 4)
+    }
+}
+
+// MARK: - Route planning overlay
+
+struct RoutePlanCenterOverlay: View {
+    let phase: RoutePlanPhase
+    var onDismiss: () -> Void
+
+    var body: some View {
+        switch phase {
+        case .idle:
+            EmptyView()
+        case .running(let message, let progress):
+            overlayScrim {
+                VStack(spacing: 18) {
+                    Group {
+                        if let progressValue = progressValue(progress) {
+                            ProgressView(value: progressValue)
+                                .progressViewStyle(.linear)
+                        } else {
+                            ProgressView()
+                                .progressViewStyle(.linear)
+                        }
+                    }
+                    .tint(AppTheme.charcoal)
+                    Text(message)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(AppTheme.charcoal)
+                        .multilineTextAlignment(.center)
+                }
+            }
+        case .success:
+            overlayScrim {
+                VStack(spacing: 14) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 40))
+                        .foregroundStyle(Color(red: 0.28, green: 0.62, blue: 0.48))
+                    Text("Route saved")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.charcoal)
+                    Text("Your day split and map routes are ready.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+            }
+        case .failure(let message):
+            overlayScrim {
+                VStack(spacing: 16) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 36))
+                        .foregroundStyle(Color(red: 0.92, green: 0.35, blue: 0.32))
+                    Text("Could not plan route")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.charcoal)
+                    Text(message)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                    Button("OK", action: onDismiss)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(AppTheme.charcoal)
+                        .padding(.top, 4)
+                }
+            }
+        }
+    }
+
+    private func progressValue(_ progress: Double?) -> Double? {
+        guard let progress else { return nil }
+        return min(1, max(0, progress))
+    }
+
+    @ViewBuilder
+    private func overlayScrim<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        ZStack {
+            Color.black.opacity(0.32)
+                .ignoresSafeArea()
+            content()
+                .padding(28)
+                .frame(maxWidth: 300)
+                .background(AppTheme.cardBackground, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius, style: .continuous))
+                .shadow(color: AppTheme.cardShadow, radius: 20, x: 0, y: 10)
+        }
+        .transition(.opacity.combined(with: .scale(scale: 0.96)))
+    }
+}
+
+// MARK: - Themed forms (sheets & edit screens)
+
+struct AppFormSection<Content: View>: View {
+    let title: String
+    var footer: String?
+    @ViewBuilder var content: () -> Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SectionTitle(title: title)
+            VStack(alignment: .leading, spacing: 14) {
+                content()
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .softCard()
+            if let footer {
+                AppFormFooterText(footer)
+            }
+        }
+    }
+}
+
+struct AppFormFooterText: View {
+    let text: String
+
+    init(_ text: String) {
+        self.text = text
+    }
+
+    var body: some View {
+        Text(text)
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+struct AppCharcoalButton: View {
+    let title: String
+    var isLoading: Bool = false
+    var disabled: Bool = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                if isLoading {
+                    ProgressView()
+                        .controlSize(.small)
+                        .tint(.white)
+                }
+                Text(title)
+                    .font(.body.weight(.semibold))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .foregroundStyle(.white)
+            .background(
+                disabled ? AppTheme.charcoal.opacity(0.35) : AppTheme.charcoal,
+                in: RoundedRectangle(cornerRadius: AppTheme.pillRadius, style: .continuous)
+            )
+        }
+        .buttonStyle(.plain)
+        .disabled(disabled || isLoading)
+    }
+}
+
+struct AppFormBanner: View {
+    enum Style {
+        case error, success, info
+
+        var tint: Color {
+            switch self {
+            case .error: Color(red: 0.92, green: 0.35, blue: 0.32)
+            case .success: Color(red: 0.28, green: 0.62, blue: 0.48)
+            case .info: AppTheme.charcoal
+            }
+        }
+
+        var fill: Color { tint.opacity(0.12) }
+    }
+
+    let text: String
+    var style: Style = .info
+
+    var body: some View {
+        Text(text)
+            .font(.subheadline)
+            .foregroundStyle(style.tint)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(14)
+            .background(style.fill, in: RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius, style: .continuous))
+    }
+}
+
+/// Short hero for modal sheets (add trip, add location, etc.).
+struct AppSheetIntro: View {
+    let title: String
+    let subtitle: String
+    let systemImage: String
+    var accent: Color = AppTheme.peachDeep
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 14) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(title)
+                    .font(.title2.weight(.bold))
+                    .foregroundStyle(AppTheme.charcoal)
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.charcoal.opacity(0.65))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 8)
+            ZStack {
+                Circle()
+                    .fill(accent.opacity(0.22))
+                Image(systemName: systemImage)
+                    .font(.title2.weight(.semibold))
+                    .foregroundStyle(accent)
+            }
+            .frame(width: 56, height: 56)
+        }
+        .padding(AppTheme.cardPadding + 2)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            LinearGradient(
+                colors: [accent.opacity(0.42), accent.opacity(0.14)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ),
+            in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius, style: .continuous)
+        )
+    }
+}
+
+struct AppFormField: View {
+    let label: String
+    var placeholder: String = ""
+    @Binding var text: String
+    var axis: Axis = .horizontal
+    var lineLimit: ClosedRange<Int>? = nil
+    var autocapitalizeWords: Bool = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(label)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+            Group {
+                if let lineLimit {
+                    TextField(placeholder, text: $text, axis: axis)
+                        .lineLimit(lineLimit)
+                } else {
+                    TextField(placeholder, text: $text, axis: axis)
+                }
+            }
+            .textInputAutocapitalization(autocapitalizeWords ? .words : .sentences)
+            .padding(12)
+            .background(AppTheme.elevatedFill, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        }
+    }
+}
+
+struct AppFormToggleRow: View {
+    let title: String
+    var subtitle: String?
+    @Binding var isOn: Bool
+
+    var body: some View {
+        Toggle(isOn: $isOn) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(AppTheme.charcoal)
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .tint(AppTheme.charcoal)
+        .padding(12)
+        .background(AppTheme.elevatedFill, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+}
+
+struct AppFormDateRow: View {
+    let label: String
+    @Binding var date: Date
+
+    var body: some View {
+        HStack {
+            Text(label)
+                .font(.body.weight(.medium))
+                .foregroundStyle(AppTheme.charcoal)
+            Spacer()
+            DatePicker("", selection: $date, displayedComponents: [.date])
+                .labelsHidden()
+                .tint(AppTheme.charcoal)
+        }
+        .padding(12)
+        .background(AppTheme.elevatedFill, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+}
+
+/// Map search field — icon badge + text (matches stay search styling).
+struct AppFormSearchBar: View {
+    @Binding var text: String
+    var category: LocationItem.Category
+    var isSearching: Bool = false
+    var placeholder: String = "Search place…"
+    var onClear: (() -> Void)?
+
+    var body: some View {
+        HStack(spacing: 12) {
+            CategoryIconBadge(category: category, size: 44)
+            TextField(placeholder, text: $text)
+                .textInputAutocapitalization(.words)
+            if isSearching {
+                ProgressView()
+                    .controlSize(.small)
+            } else if !text.isEmpty, let onClear {
+                Button(action: onClear) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title3)
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(14)
+        .background(AppTheme.cardBackground, in: RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius, style: .continuous))
+        .shadow(color: AppTheme.cardShadow, radius: AppTheme.cardShadowRadius, x: 0, y: AppTheme.cardShadowY)
+    }
+}
+
+struct AppSelectablePlaceRow: View {
+    let title: String
+    var subtitle: String?
+    let category: LocationItem.Category
+    var isSelected: Bool = false
+
+    var body: some View {
+        HStack(alignment: .top, spacing: AppTheme.rowSpacing) {
+            CategoryIconBadge(category: category, size: 44)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.charcoal)
+                    .multilineTextAlignment(.leading)
+                if let subtitle, !subtitle.isEmpty {
+                    Text(subtitle)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.leading)
+                }
+            }
+            Spacer(minLength: 0)
+            Image(systemName: isSelected ? "checkmark.circle.fill" : "chevron.right")
+                .font(isSelected ? .title3 : .caption.weight(.semibold))
+                .foregroundStyle(isSelected ? AppTheme.categoryTint(category) : Color.secondary.opacity(0.55))
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AppTheme.cardBackground, in: RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius, style: .continuous))
+        .shadow(color: AppTheme.cardShadow, radius: AppTheme.cardShadowRadius, x: 0, y: AppTheme.cardShadowY)
+        .overlay {
+            if isSelected {
+                RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius, style: .continuous)
+                    .strokeBorder(AppTheme.categoryTint(category).opacity(0.55), lineWidth: 2)
+            }
+        }
+    }
+}
+
+struct CategoryPickerChips: View {
+    @Binding var selection: LocationItem.Category
+
+    private let featured: [LocationItem.Category] = [
+        .landmark, .museum, .restaurant, .cafe, .park, .hotel, .shopping, .nightlife, .other,
+    ]
+
+    private var chipSize: CGFloat { 56 }
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 14) {
+                ForEach(featured) { cat in
+                    categoryChip(cat)
+                }
+            }
+        }
+    }
+
+    private func categoryChip(_ cat: LocationItem.Category) -> some View {
+        let isSelected = selection == cat
+        return Button {
+            selection = cat
+        } label: {
+            VStack(spacing: 8) {
+                ZStack {
+                    Circle()
+                        .fill(AppTheme.categoryPastelFill(cat))
+                        .frame(width: chipSize, height: chipSize)
+                    Image(systemName: cat.symbolName)
+                        .font(.system(size: chipSize * 0.36, weight: .semibold))
+                        .foregroundStyle(AppTheme.categoryTint(cat))
+                }
+                .overlay {
+                    if isSelected {
+                        Circle()
+                            .strokeBorder(AppTheme.charcoal, lineWidth: 2.5)
+                            .frame(width: chipSize, height: chipSize)
+                    }
+                }
+                Text(cat.title)
+                    .font(.caption2.weight(isSelected ? .semibold : .medium))
+                    .foregroundStyle(isSelected ? AppTheme.charcoal : .secondary)
+                    .lineLimit(1)
+            }
+            .frame(width: chipSize + 8)
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -304,7 +908,12 @@ struct TripListingCard: View {
                     .foregroundStyle(AppTheme.charcoal)
                     .lineLimit(2)
 
-                if let start = trip.startDate, let end = trip.endDate {
+                if !trip.trimmedCountry.isEmpty {
+                    Text(trip.placeFilterSummary ?? trip.trimmedCountry)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                } else if let start = trip.startDate, let end = trip.endDate {
                     Text("\(Self.dateFormatter.string(from: start)) – \(Self.dateFormatter.string(from: end))")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -473,7 +1082,12 @@ struct InboxLocationCard: View {
                 Text(location.name)
                     .font(.headline)
                     .foregroundStyle(AppTheme.charcoal)
-                if let notes = location.notes?.trimmingCharacters(in: .whitespacesAndNewlines), !notes.isEmpty {
+                if let placeLine = location.inboxPlaceSubtitle {
+                    Text(placeLine)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                } else if let notes = location.notes?.trimmingCharacters(in: .whitespacesAndNewlines), !notes.isEmpty {
                     Text(notes)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
@@ -596,7 +1210,7 @@ struct AppEmptyState: View {
 }
 
 #Preview("Plan hero") {
-    PlanHeroCard(action: {})
+    PlanHeroCard()
         .padding()
         .appScreenBackground()
 }

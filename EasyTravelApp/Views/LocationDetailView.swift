@@ -19,6 +19,11 @@ struct LocationDetailView: View {
         store.location(id: locationID, tripID: tripID)
     }
 
+    private var parentTrip: Trip? {
+        guard let tripID else { return nil }
+        return store.trips.first(where: { $0.id == tripID })
+    }
+
     var body: some View {
         Group {
             if let loc = currentLocation, initialLocation != nil {
@@ -90,6 +95,21 @@ struct LocationDetailView: View {
             Text("Details")
                 .font(.headline)
                 .foregroundStyle(AppTheme.charcoal)
+            if let trip = parentTrip {
+                if let c = trip.trimmedCity {
+                    detailRow(label: "City", value: c)
+                }
+                if !trip.trimmedCountry.isEmpty {
+                    detailRow(label: "Country", value: trip.trimmedCountry)
+                }
+            } else {
+                if let c = loc.trimmedInboxCity {
+                    detailRow(label: "City", value: c)
+                }
+                if let co = loc.trimmedInboxCountry {
+                    detailRow(label: "Country", value: co)
+                }
+            }
             if let address = loc.address, !address.isEmpty {
                 detailRow(label: "Address", value: address)
             }

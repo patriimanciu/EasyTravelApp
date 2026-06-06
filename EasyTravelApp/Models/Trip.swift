@@ -19,6 +19,10 @@ struct TripPlannedDay: Codable, Hashable, Identifiable {
 struct Trip: Identifiable, Codable, Hashable {
     var id: UUID
     var name: String
+    /// Required — all stops on this trip share this country for Maps search bias.
+    var country: String
+    /// Optional metro / city (e.g. "Paris").
+    var city: String?
     var startDate: Date?
     var endDate: Date?
     /// Hotel / rental — when set, planning uses it as the hub each day (leave and return).
@@ -33,6 +37,8 @@ struct Trip: Identifiable, Codable, Hashable {
     init(
         id: UUID = UUID(),
         name: String,
+        country: String,
+        city: String? = nil,
         startDate: Date? = nil,
         endDate: Date? = nil,
         accommodation: TripAccommodation? = nil,
@@ -43,6 +49,8 @@ struct Trip: Identifiable, Codable, Hashable {
     ) {
         self.id = id
         self.name = name
+        self.country = country
+        self.city = city
         self.startDate = startDate
         self.endDate = endDate
         self.accommodation = accommodation
@@ -56,6 +64,8 @@ struct Trip: Identifiable, Codable, Hashable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decode(UUID.self, forKey: .id)
         name = try c.decode(String.self, forKey: .name)
+        country = try c.decodeIfPresent(String.self, forKey: .country) ?? ""
+        city = try c.decodeIfPresent(String.self, forKey: .city)
         startDate = try c.decodeIfPresent(Date.self, forKey: .startDate)
         endDate = try c.decodeIfPresent(Date.self, forKey: .endDate)
         accommodation = try c.decodeIfPresent(TripAccommodation.self, forKey: .accommodation)
@@ -69,6 +79,8 @@ struct Trip: Identifiable, Codable, Hashable {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(id, forKey: .id)
         try c.encode(name, forKey: .name)
+        try c.encode(country, forKey: .country)
+        try c.encodeIfPresent(city, forKey: .city)
         try c.encodeIfPresent(startDate, forKey: .startDate)
         try c.encodeIfPresent(endDate, forKey: .endDate)
         try c.encodeIfPresent(accommodation, forKey: .accommodation)
@@ -79,6 +91,34 @@ struct Trip: Identifiable, Codable, Hashable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, startDate, endDate, accommodation, createdAt, locations, plannedDays, plannedRoutePolyline
+        case id, name, country, city, startDate, endDate, accommodation, createdAt, locations, plannedDays, plannedRoutePolyline
+    }
+}
+
+extension Trip {
+    /// True when the trip has a valid start and end date (required for map route lines).
+    var hasItineraryDates: Bool {
+        guard let start = startDate, let end = endDate else { return false }
+        let cal = Calendar.current
+        return cal.startOfDay(for: end) >= cal.startOfDay(for: start)
+    }
+
+    var trimmedCountry: String {
+        country.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    var trimmedCity: String? {
+        guard let city else { return nil }
+        let t = city.trimmingCharacters(in: .whitespacesAndNewlines)
+        return t.isEmpty ? nil : t
+    }
+
+    /// "Paris, France" or country only — for UI and search bias.
+    var placeFilterSummary: String? {
+        switch (trimmedCity, trimmedCountry.isEmpty) {
+        case (let c?, false): return "\(c), \(trimmedCountry)"
+        case (nil, false): return trimmedCountry
+        default: return nil
+        }
     }
 }

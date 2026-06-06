@@ -14,6 +14,8 @@ struct TripDetailView: View {
     @State private var isEditingRouteOrder = false
     /// Shown after swipe “Add to day” when the trip has multiple visit days.
     @State private var addToDayPickerLocationID: UUID?
+    @State private var pendingRouteResetDeleteIDs: Set<LocationItem.ID> = []
+    @State private var confirmRouteResetDelete = false
 
     enum ListMode: String, CaseIterable, Identifiable {
         case byCategory = "Categories"
@@ -151,6 +153,16 @@ struct TripDetailView: View {
                         addToDayPickerLocationID = nil
                     }
                 }
+                .alert(routeResetDeleteTitle, isPresented: $confirmRouteResetDelete) {
+                    Button("Delete and reset route", role: .destructive) {
+                        performPendingRouteResetDeletes()
+                    }
+                    Button("Cancel", role: .cancel) {
+                        pendingRouteResetDeleteIDs = []
+                    }
+                } message: {
+                    Text("Deleting this item will reset the routing.")
+                }
                 .navigationDestination(for: LocationDetailRoute.self) { route in
                     LocationDetailView(locationID: route.locationID, tripID: route.tripID)
                         .environmentObject(store)
@@ -228,20 +240,25 @@ struct TripDetailView: View {
     private func embeddedMapSection(trip: Trip) -> some View {
         let planDays = sortedPlannedDays(for: trip)
         VStack(alignment: .leading, spacing: 12) {
-            if planDays.isEmpty, trip.locations.count >= 2 {
+            if !trip.hasItineraryDates, trip.locations.count >= 2 {
+                AppTipBanner(
+                    text: "Set trip dates in Trip settings to draw walking routes on the map.",
+                    systemImage: "calendar"
+                )
+            } else if planDays.isEmpty, trip.locations.count >= 2 {
                 AppTipBanner(
                     text: "Plan your route to split stops across days — the map updates as you pick each day.",
                     systemImage: "map"
                 )
             }
 
-            if planDays.count > 1 {
+            if trip.hasItineraryDates, planDays.count > 1 {
                 mapDayChips(days: planDays, selection: $mapSelectedDay)
             }
 
             TripMapView(
                 trip: trip,
-                plannedDayIndex: planDays.isEmpty ? nil : mapSelectedDay
+                plannedDayIndex: (trip.hasItineraryDates && !planDays.isEmpty) ? mapSelectedDay : nil
             )
             .frame(height: AppTheme.embeddedMapHeight)
             .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius, style: .continuous))
@@ -271,9 +288,7 @@ struct TripDetailView: View {
                         let idsToDelete = offsets.compactMap { index in
                             group.locations[safe: index]?.id
                         }
-                        for id in idsToDelete {
-                            store.deleteLocation(tripID: tripID, locationID: id)
-                        }
+                        requestDeleteLocations(idsToDelete)
                     }
                 }
             }
@@ -327,7 +342,7 @@ struct TripDetailView: View {
                 } header: {
                     Text("Not in plan")
                 } footer: {
-                    Text("These stops were not assigned when you last computed the route. Tap + or swipe right to add them to a day.")
+                    Text("These stops are not on any visit day yet — newly added places appear here until you add them to a day.")
                         .font(.caption)
                 }
             }
@@ -347,6 +362,35 @@ struct TripDetailView: View {
                     }
                 }
             }
+        }
+    }
+
+    private var routeResetDeleteTitle: String {
+        let count = pendingRouteResetDeleteIDs.count
+        if count <= 1 { return "Delete location?" }
+        return "Delete \(count) locations?"
+    }
+
+    private func requestDeleteLocations(_ ids: [LocationItem.ID]) {
+        guard !ids.isEmpty else { return }
+        let resetIDs = ids.filter {
+            store.tripLocationDeletionImpact(tripID: tripID, locationID: $0) == .resetsRoute
+        }
+        let safeIDs = ids.filter { !resetIDs.contains($0) }
+        for id in safeIDs {
+            store.deleteLocation(tripID: tripID, locationID: id)
+        }
+        if !resetIDs.isEmpty {
+            pendingRouteResetDeleteIDs = Set(resetIDs)
+            confirmRouteResetDelete = true
+        }
+    }
+
+    private func performPendingRouteResetDeletes() {
+        let ids = pendingRouteResetDeleteIDs
+        pendingRouteResetDeleteIDs = []
+        for id in ids {
+            store.deleteLocation(tripID: tripID, locationID: id, confirmRouteReset: true)
         }
     }
 

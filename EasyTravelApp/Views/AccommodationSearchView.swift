@@ -12,93 +12,202 @@ struct AccommodationSearchView: View {
     @State private var results: [MKMapItem] = []
     @State private var isSearching = false
     @State private var searchNote: String?
+    @State private var hasSearched = false
+    @State private var searchTask: Task<Void, Never>?
+    @State private var activeSearch: MKLocalSearch?
+
+    private let debounceNanos: UInt64 = 450_000_000
+    private let minQueryLength = 2
 
     var body: some View {
         NavigationStack {
-            List {
-                Section {
-                    TextField("Hotel, street, neighborhood…", text: $query)
-                        .textInputAutocapitalization(.sentences)
-                        .onSubmit { Task { await runSearch() } }
-                    Button {
-                        Task { await runSearch() }
-                    } label: {
-                        if isSearching {
-                            HStack {
-                                Text("Searching…")
-                                Spacer()
-                                ProgressView()
-                            }
-                        } else {
-                            Text("Search")
-                        }
-                    }
-                    .disabled(query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSearching)
-                } footer: {
-                    if let searchNote {
-                        Text(searchNote)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text("Results are biased near your trip stops when possible.")
-                            .foregroundStyle(.secondary)
-                    }
-                }
+            ScrollView {
+                VStack(alignment: .leading, spacing: AppTheme.sectionSpacing) {
+                    searchField
 
-                Section("Results") {
-                    if !isSearching, results.isEmpty, !query.isEmpty, searchNote == nil {
-                        ContentUnavailableView(
-                            "No matches",
-                            systemImage: "magnifyingglass",
-                            description: Text("Try a shorter query or include the city name.")
-                        )
-                    }
-                    ForEach(Array(results.enumerated()), id: \.offset) { _, item in
-                        Button {
-                            pick(item)
-                        } label: {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(primaryTitle(for: item))
-                                    .font(.headline)
-                                    .foregroundStyle(.primary)
-                                if let subtitle = secondaryLine(for: item) {
-                                    Text(subtitle)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                        }
-                    }
+                    Text(footerMessage)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    resultsContent
                 }
+                .appPagePadding()
+                .padding(.top, 8)
+                .padding(.bottom, 24)
             }
+            .scrollDismissesKeyboard(.interactively)
+            .appScreenBackground()
             .navigationTitle("Search stay")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                        .foregroundStyle(AppTheme.charcoal)
+                }
+            }
+            .onChange(of: query) { _, newValue in
+                scheduleSearch(for: newValue)
+            }
+            .onDisappear {
+                searchTask?.cancel()
+                activeSearch?.cancel()
+            }
+        }
+        .tint(AppTheme.charcoal)
+    }
+
+    private var footerMessage: String {
+        if let searchNote { return searchNote }
+        if isSearching { return "Searching Apple Maps…" }
+        if query.trimmingCharacters(in: .whitespacesAndNewlines).count < minQueryLength {
+            return "Type at least \(minQueryLength) characters — results are biased near your trip stops when possible."
+        }
+        return "Results are biased near your trip stops when possible."
+    }
+
+    @ViewBuilder
+    private var searchField: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(AppTheme.categoryPastelFill(.hotel))
+                    .frame(width: 44, height: 44)
+                Image(systemName: "bed.double.fill")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(AppTheme.categoryTint(.hotel))
+            }
+
+            TextField("Hotel, street, neighborhood…", text: $query)
+                .textInputAutocapitalization(.words)
+                .autocorrectionDisabled()
+                .submitLabel(.search)
+                .onSubmit { scheduleSearch(for: query, immediate: true) }
+
+            if isSearching {
+                ProgressView()
+                    .controlSize(.small)
+            } else if !query.isEmpty {
+                Button {
+                    query = ""
+                    results = []
+                    searchNote = nil
+                    hasSearched = false
+                    searchTask?.cancel()
+                    activeSearch?.cancel()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title3)
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Clear search")
+            }
+        }
+        .padding(14)
+        .background(AppTheme.cardBackground, in: RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius, style: .continuous))
+        .shadow(color: AppTheme.cardShadow, radius: AppTheme.cardShadowRadius, x: 0, y: AppTheme.cardShadowY)
+    }
+
+    @ViewBuilder
+    private var resultsContent: some View {
+        if isSearching, results.isEmpty {
+            HStack(spacing: 10) {
+                ProgressView()
+                Text("Looking for places…")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 8)
+        } else if hasSearched, results.isEmpty {
+            AppEmptyState(
+                title: "No matches",
+                systemImage: "magnifyingglass",
+                message: "Try a shorter query or include the city name."
+            )
+        } else if !results.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                SectionTitle(title: "Results", trailing: "\(results.count)")
+
+                ForEach(Array(results.enumerated()), id: \.offset) { _, item in
+                    Button {
+                        pick(item)
+                    } label: {
+                        stayResultRow(item)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
     }
 
+    private func stayResultRow(_ item: MKMapItem) -> some View {
+        HStack(alignment: .top, spacing: AppTheme.rowSpacing) {
+            CategoryIconBadge(category: .hotel, size: 44)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(primaryTitle(for: item))
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.charcoal)
+                    .multilineTextAlignment(.leading)
+                if let subtitle = secondaryLine(for: item) {
+                    Text(subtitle)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.leading)
+                }
+            }
+
+            Spacer(minLength: 0)
+
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AppTheme.cardBackground, in: RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius, style: .continuous))
+        .shadow(color: AppTheme.cardShadow, radius: AppTheme.cardShadowRadius, x: 0, y: AppTheme.cardShadowY)
+    }
+
+    private func scheduleSearch(for text: String, immediate: Bool = false) {
+        searchTask?.cancel()
+        activeSearch?.cancel()
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmed.count >= minQueryLength else {
+            isSearching = false
+            results = []
+            searchNote = nil
+            hasSearched = false
+            return
+        }
+
+        searchTask = Task {
+            if !immediate {
+                try? await Task.sleep(nanoseconds: debounceNanos)
+            }
+            guard !Task.isCancelled else { return }
+            await runSearch(query: trimmed)
+        }
+    }
+
     private func primaryTitle(for item: MKMapItem) -> String {
         if let name = item.name, !name.isEmpty { return name }
-        return item.placemark.title ?? "Place"
+        return MapPlaceFormatting.shortAddress(from: item) ?? "Place"
     }
 
     private func secondaryLine(for item: MKMapItem) -> String? {
-        let lines = [
-            item.placemark.thoroughfare,
-            item.placemark.locality,
-            item.placemark.country,
-        ]
-        .compactMap { $0 }
-        .filter { !$0.isEmpty }
-        let s = lines.joined(separator: ", ")
-        return s.isEmpty ? nil : s
+        if let cityWithContext = item.addressRepresentations?.cityWithContext {
+            return cityWithContext
+        }
+        return MapPlaceFormatting.postalLine(from: item)
     }
 
     private func pick(_ item: MKMapItem) {
-        let c = item.placemark.coordinate
+        let c = MapPlaceFormatting.coordinate(from: item)
         guard c.latitude >= -90, c.latitude <= 90, c.longitude >= -180, c.longitude <= 180 else {
             searchNote = "That result has no usable coordinates. Try another."
             return
@@ -108,39 +217,48 @@ struct AccommodationSearchView: View {
         dismiss()
     }
 
-    private func runSearch() async {
-        let q = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !q.isEmpty else { return }
+    @MainActor
+    private func runSearch(query searchQuery: String) async {
+        guard !searchQuery.isEmpty else { return }
+
         isSearching = true
         searchNote = nil
 
         let request = MKLocalSearch.Request()
-        request.naturalLanguageQuery = q
+        request.naturalLanguageQuery = searchQuery
         request.resultTypes = [.address, .pointOfInterest]
         if let biasRegion {
             request.region = biasRegion
         }
 
+        activeSearch?.cancel()
         let search = MKLocalSearch(request: request)
-        await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
-            search.start { response, error in
-                Task { @MainActor in
-                    isSearching = false
-                    if let error {
-                        results = []
-                        searchNote = error.localizedDescription
-                    } else {
-                        results = response?.mapItems ?? []
-                        if results.isEmpty {
-                            searchNote = "No results. Try adding the city or a landmark nearby."
-                        } else {
-                            searchNote = nil
-                        }
-                    }
-                    cont.resume()
-                }
+        activeSearch = search
+
+        do {
+            let response = try await search.start()
+            guard !Task.isCancelled else { return }
+            results = response.mapItems
+            hasSearched = true
+            if results.isEmpty {
+                searchNote = "No results. Try adding the city or a landmark nearby."
+            }
+        } catch {
+            guard !Task.isCancelled else { return }
+            if (error as NSError).domain == MKErrorDomain, (error as NSError).code == MKError.loadingThrottled.rawValue {
+                return
+            }
+            if error is CancellationError { return }
+            results = []
+            hasSearched = true
+            if (error as NSError).domain == MKErrorDomain, (error as NSError).code == MKError.placemarkNotFound.rawValue {
+                searchNote = "No results. Try adding the city or a landmark nearby."
+            } else {
+                searchNote = error.localizedDescription
             }
         }
+
+        isSearching = false
     }
 }
 

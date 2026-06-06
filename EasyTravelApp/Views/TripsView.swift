@@ -3,7 +3,6 @@ import SwiftUI
 struct TripsView: View {
     @EnvironmentObject private var store: TravelStore
     @State private var isPresentingAddTrip = false
-    @State private var isPresentingImport = false
     @State private var planTripID: Trip.ID?
     @State private var tripToDelete: Trip.ID?
 
@@ -11,15 +10,13 @@ struct TripsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppTheme.sectionSpacing) {
                 HomeHeaderView(
-                    greeting: "Hello",
+                    greeting: "Hello, Patri",
                     subtitle: "Your trips",
                     onAddTrip: { isPresentingAddTrip = true }
                 )
                 .padding(.top, 8)
 
-                PlanHeroCard {
-                    handlePlanWithAI()
-                }
+                PlanHeroCard()
 
                 SectionTitle(
                     title: store.trips.isEmpty ? "Get started" : "Your trips",
@@ -63,9 +60,6 @@ struct TripsView: View {
         .sheet(isPresented: $isPresentingAddTrip) {
             AddTripView(isPresented: $isPresentingAddTrip)
         }
-        .sheet(isPresented: $isPresentingImport) {
-            ImportFromVideoView(isPresented: $isPresentingImport)
-        }
         .sheet(isPresented: Binding(
             get: { planTripID != nil },
             set: { if !$0 { planTripID = nil } }
@@ -95,16 +89,6 @@ struct TripsView: View {
                 }
             }
             Button("Cancel", role: .cancel) { tripToDelete = nil }
-        }
-    }
-
-    private func handlePlanWithAI() {
-        if let trip = store.trips.first(where: { $0.locations.count >= 2 }) {
-            planTripID = trip.id
-        } else if store.trips.isEmpty {
-            isPresentingImport = true
-        } else {
-            isPresentingAddTrip = true
         }
     }
 }

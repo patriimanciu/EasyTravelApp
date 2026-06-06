@@ -6,6 +6,8 @@ import MapKit
 struct ResolvedMapPlace: Sendable {
     let coordinate: CLLocationCoordinate2D
     let formattedAddress: String?
+    let city: String?
+    let country: String?
     let phoneNumber: String?
     let url: String?
 }
@@ -29,10 +31,11 @@ enum LocationResolver {
         guard let item = response.mapItems.first else {
             throw NSError(domain: "LocationResolver", code: 404, userInfo: [NSLocalizedDescriptionKey: "No map result for \(query)"])
         }
-        let pm = item.placemark
         return ResolvedMapPlace(
-            coordinate: pm.coordinate,
-            formattedAddress: MapPlaceFormatting.postalLine(from: pm),
+            coordinate: MapPlaceFormatting.coordinate(from: item),
+            formattedAddress: MapPlaceFormatting.postalLine(from: item),
+            city: MapPlaceFormatting.city(from: item),
+            country: MapPlaceFormatting.country(from: item),
             phoneNumber: item.phoneNumber,
             url: item.url?.absoluteString
         )

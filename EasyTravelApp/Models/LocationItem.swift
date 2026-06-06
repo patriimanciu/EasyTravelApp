@@ -118,6 +118,9 @@ struct LocationItem: Identifiable, Codable, Hashable {
     var category: Category
     var notes: String?
     var address: String?
+    /// Set on video import for Inbox filtering before a trip is chosen.
+    var city: String?
+    var country: String?
     var phoneNumber: String?
     var url: String?
     /// Weekday-based lines (e.g. "Monday: 9:00 AM – 5:00 PM").
@@ -135,6 +138,8 @@ struct LocationItem: Identifiable, Codable, Hashable {
         category: Category = .other,
         notes: String? = nil,
         address: String? = nil,
+        city: String? = nil,
+        country: String? = nil,
         phoneNumber: String? = nil,
         url: String? = nil,
         openingHours: [String]? = nil,
@@ -149,6 +154,8 @@ struct LocationItem: Identifiable, Codable, Hashable {
         self.category = category
         self.notes = notes
         self.address = address
+        self.city = city
+        self.country = country
         self.phoneNumber = phoneNumber
         self.url = url
         self.openingHours = openingHours
@@ -167,6 +174,8 @@ struct LocationItem: Identifiable, Codable, Hashable {
         category = try container.decodeIfPresent(Category.self, forKey: .category) ?? .other
         notes = try container.decodeIfPresent(String.self, forKey: .notes)
         address = try container.decodeIfPresent(String.self, forKey: .address)
+        city = try container.decodeIfPresent(String.self, forKey: .city)
+        country = try container.decodeIfPresent(String.self, forKey: .country)
         phoneNumber = try container.decodeIfPresent(String.self, forKey: .phoneNumber)
         url = try container.decodeIfPresent(String.self, forKey: .url)
         // Backward compatibility: older JSON stored openingHours as a single string.
@@ -199,6 +208,8 @@ struct LocationItem: Identifiable, Codable, Hashable {
         try c.encode(category, forKey: .category)
         try c.encodeIfPresent(notes, forKey: .notes)
         try c.encodeIfPresent(address, forKey: .address)
+        try c.encodeIfPresent(city, forKey: .city)
+        try c.encodeIfPresent(country, forKey: .country)
         try c.encodeIfPresent(phoneNumber, forKey: .phoneNumber)
         try c.encodeIfPresent(url, forKey: .url)
         try c.encodeIfPresent(openingHours, forKey: .openingHours)
@@ -208,9 +219,33 @@ struct LocationItem: Identifiable, Codable, Hashable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, latitude, longitude, category, notes, address, phoneNumber, url, openingHours
+        case id, name, latitude, longitude, category, notes, address, city, country, phoneNumber, url, openingHours
         case visitPriority
         case createdAt, source
+    }
+}
+
+extension LocationItem {
+    var trimmedInboxCountry: String? {
+        guard let country else { return nil }
+        let t = country.trimmingCharacters(in: .whitespacesAndNewlines)
+        return t.isEmpty ? nil : t
+    }
+
+    var trimmedInboxCity: String? {
+        guard let city else { return nil }
+        let t = city.trimmingCharacters(in: .whitespacesAndNewlines)
+        return t.isEmpty ? nil : t
+    }
+
+    /// City / country line for Inbox cards (video import metadata).
+    var inboxPlaceSubtitle: String? {
+        switch (trimmedInboxCity, trimmedInboxCountry) {
+        case (let c?, let co?): return "\(c), \(co)"
+        case (nil, let co?): return co
+        case (let c?, nil): return c
+        case (nil, nil): return nil
+        }
     }
 }
 
