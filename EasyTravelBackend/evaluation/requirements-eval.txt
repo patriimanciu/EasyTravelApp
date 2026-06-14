@@ -1,0 +1,14 @@
+# Extra dependencies for the evaluation harness (thesis Chapter 5).
+# The backend runtime deps (fastapi, openai, yt-dlp, openai-whisper, pytesseract,
+# numpy, …) are assumed already installed for the server itself.
+
+# Exact TSP reference for the optimality-gap metric (Held–Karp / branch-and-bound).
+# NB: python-tsp pulls in tsplib95, which declares networkx~=2.1. We do not use
+# tsplib95, and the backend's image stack (scikit-image/easyocr) needs
+# networkx>=3, so keep networkx>=3 installed after adding this dependency:
+#   pip install "networkx>=3.0"
+python-tsp>=0.4.1
+networkx>=3.0
+
+# Test runner for the metric unit tests.
+pytest>=8.0

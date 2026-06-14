@@ -1,0 +1,98 @@
+{
+  "video_id": "M3",
+  "group": "M",
+  "notes": "MIXED (spoken + on-screen text + caption). Watch https://vm.tiktok.com/ZNRvchDW9/ and list each venue from ANY channel (merge duplicates into one POI). NOTE: this link currently duplicates O5 — replace one of them with a distinct video. POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional. Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "Oxford Divinity School",
+      "category": "Other",
+      "city": "Oxford",
+      "country": "UK",
+      "latitude": 51.7541,
+      "longitude": -1.2546,
+      "alternatives": ["Divinity School"]
+    },
+    {
+      "name": "Oxford New Collage",
+      "category": "Other",
+      "city": "Oxford",
+      "country": "UK",
+      "latitude": 51.7550,
+      "longitude": -1.2505,
+      "alternatives": ["New Collage"]
+    },
+    {
+      "name": "Oxford Christ Church Collage",
+      "category": "Other",
+      "city": "Oxford",
+      "country": "UK",
+      "latitude": 51.7499,
+      "longitude": -1.2556,
+      "alternatives": ["Christ Church", "Christ Church Collage"]
+    },
+    {
+      "name": "Turf Tavern",
+      "category": "Restaurant",
+      "city": "Oxford",
+      "country": "UK",
+      "latitude": 51.75480,
+      "longitude": -1.2528
+    },
+    {
+      "name": "The Bear Inn",
+      "category": "Restaurant",
+      "city": "Oxford",
+      "country": "UK",
+      "latitude": 51.7516,
+      "longitude": -1.2558
+    },
+    {
+      "name": "Covered Market",
+      "category": "Shopping",
+      "city": "Oxford",
+      "country": "UK",
+      "latitude": 51.7528,
+      "longitude": -1.2568
+    },
+    {
+      "name": "I-Scream",
+      "category": "Other",
+      "city": "Oxford",
+      "country": "UK",
+      "latitude": 51.7526,
+      "longitude": -1.2563
+    },
+    {
+      "name": "The Grand Cafe",
+      "category": "Cafe",
+      "city": "Oxford",
+      "country": "UK",
+      "latitude": 51.7526, 
+      "longitude": -1.2503
+    },
+    {
+      "name": "Blenheim Palace",
+      "category": "Landmark",
+      "city": "Oxford",
+      "country": "UK",
+      "latitude": 51.8414,
+      "longitude": -1.3608
+    },
+    {
+      "name": "The Folly",
+      "category": "Restaurant",
+      "city": "Oxford",
+      "country": "UK",
+      "latitude": 51.7462,
+      "longitude": -1.2562
+    },
+    {
+      "name": "Mercure Hawkwell House",
+      "category": "Hotel",
+      "city": "Oxford",
+      "country": "UK",
+      "latitude": 51.7319,
+      "longitude": -1.2335
+    }
+  ]
+}

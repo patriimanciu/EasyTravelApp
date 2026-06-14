@@ -1,0 +1,22 @@
+{
+  "_comment": "Corpus manifest for the 15-video extraction fixture set (thesis Section 5.2.1). Groups: A=audio-only, O=ocr-only, M=mixed. Complete the matching gold/<id>.json list for each. NOTE: O5 and M3 currently point to the same TikTok link (ZNRvchDW9) — replace one with a distinct video.",
+  "videos": [
+    { "id": "A1", "group": "A", "title": "", "url": "https://vm.tiktok.com/ZNRcJWp68/", "gold_file": "gold/A1.json" },
+    { "id": "A2", "group": "A", "title": "", "url": "https://vm.tiktok.com/ZNRvc98VH/", "gold_file": "gold/A2.json" },
+    { "id": "A3", "group": "A", "title": "", "url": "https://vm.tiktok.com/ZNRvoSEAU/", "gold_file": "gold/A3.json" },
+    { "id": "A4", "group": "A", "title": "", "url": "https://vm.tiktok.com/ZNRvcXGm9/", "gold_file": "gold/A4.json" },
+    { "id": "A5", "group": "A", "title": "", "url": "https://vm.tiktok.com/ZNRvcXgDG/", "gold_file": "gold/A5.json" },
+
+    { "id": "O1", "group": "O", "title": "", "url": "https://vm.tiktok.com/ZNRcdMxP9/", "gold_file": "gold/O1.json" },
+    { "id": "O2", "group": "O", "title": "", "url": "https://vm.tiktok.com/ZNRcdP2fA/", "gold_file": "gold/O2.json" },
+    { "id": "O3", "group": "O", "title": "", "url": "https://vm.tiktok.com/ZNRvcayTn/", "gold_file": "gold/O3.json" },
+    { "id": "O4", "group": "O", "title": "", "url": "https://vm.tiktok.com/ZNRcJBjJH/", "gold_file": "gold/O4.json" },
+    { "id": "O5", "group": "O", "title": "", "url": "https://vm.tiktok.com/ZNRcJ67xv/", "gold_file": "gold/O5.json" },
+
+    { "id": "M1", "group": "M", "title": "", "url": "https://vm.tiktok.com/ZNRvcH2bC/", "gold_file": "gold/M1.json" },
+    { "id": "M2", "group": "M", "title": "", "url": "https://vm.tiktok.com/ZNRvcBbNT/", "gold_file": "gold/M2.json" },
+    { "id": "M3", "group": "M", "title": "", "url": "https://vm.tiktok.com/ZNRvc3u8d/", "gold_file": "gold/M3.json" },
+    { "id": "M4", "group": "M", "title": "", "url": "https://vm.tiktok.com/ZNRvcQCKW/", "gold_file": "gold/M4.json" },
+    { "id": "M5", "group": "M", "title": "", "url": "https://vm.tiktok.com/ZNRvcCFga/", "gold_file": "gold/M5.json" }
+  ]
+}

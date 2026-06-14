@@ -1,0 +1,95 @@
+{
+  "video_id": "M2",
+  "group": "M",
+  "notes": "MIXED (spoken + on-screen text + caption). Watch https://vm.tiktok.com/ZNRvcBbNT/ and list each venue from ANY channel (merge duplicates into one POI). POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional (needed only for geodesic error). Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "Hongdae Street",
+      "category": "Nightlife",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.5562,
+      "longitude": 126.9251
+    },
+    {
+      "name": "Cheonggyecheon Stream",
+      "category": "Other",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.5689, 
+      "longitude": 126.9844
+    },
+    {
+      "name": "Myeongdong",
+      "category": "Shopping",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.5617,
+      "longitude": 126.9859
+    },
+    {
+      "name": "Mangwon Market",
+      "category": "Shopping",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.55605, 
+      "longitude": 126.9062
+    },
+    {
+      "name": "Hyeongui Line Forest Park",
+      "category": "Park",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.5599,
+      "longitude": 126.9269
+    },
+    {
+      "name": "Jayeongdo Sogeumppang",
+      "category": "Restaurant",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.57396, 
+      "longitude": 126.9899
+    },
+    {
+      "name": "Eunpyeong Hanok Village",
+      "category": "Landmark",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.6414,
+      "longitude": 126.9395
+    },
+    {
+      "name": "Jeongneungcheon Stream",
+      "category": "Other",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.6020, 
+      "longitude": 127.0722
+    },
+    {
+      "name": "Bukhansan National Park",
+      "category": "Park",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.6190,
+      "longitude": 126.9974
+    },
+    {
+      "name": "Ichon Hangang Park",
+      "category": "Park",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.5176,
+      "longitude": 126.9721
+    },
+    {
+      "name": "N Seoul Tower",
+      "category": "Landmark",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.5514,
+      "longitude": 126.9887
+    }
+  ]
+}

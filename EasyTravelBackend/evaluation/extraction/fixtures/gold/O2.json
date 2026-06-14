@@ -1,0 +1,71 @@
+{
+  "video_id": "O2",
+  "group": "O",
+  "notes": "OCR-ONLY. Watch https://vm.tiktok.com/ZNRcdP2fA/ and list each venue shown as ON-SCREEN TEXT. POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional (needed only for geodesic error). Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "Bukchon Hanok Village",
+      "category": "Neighborhood",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.58152,
+      "longitude": 126.9851
+    },
+    {
+      "name": "Dongdaemun Design Plaza",
+      "category": "Landmark",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.5669,
+      "longitude": 127.01011
+    },
+    {
+      "name": "Cheonggyecheon Stream",
+      "category": "Other",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.5689, 
+      "longitude": 126.9844
+    },
+    {
+      "name": "Gwangjang Market",
+      "category": "Shopping",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.57023,
+      "longitude": 126.9999
+    },
+    {
+      "name": "Ikseon-gong Hanok Village",
+      "category": "Landmark",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.57393,
+      "longitude": 126.9904
+    },
+    {
+      "name": "Gyeongbokgung Palace",
+      "category": "Landmark",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.5799,
+      "longitude": 126.9775,
+      "alternatives": ["Gyeongbokgung"]
+    },
+    {
+      "name": "Banpo Bridge Moonlight Rainbow Fountain",
+      "category": "Other",
+      "city": "Seoul",
+      "country": "South Korea",
+      "latitude": 37.51267,
+      "longitude": 126.9986,
+      "alternatives": ["Banpo Bridge"]
+    },
+    {
+      "name": "Myeongdong",
+      "category": "Nightlife",
+      "city": "Seoul",
+      "country": "South Korea"
+    }    
+  ]
+}

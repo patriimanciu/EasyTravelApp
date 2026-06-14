@@ -1,0 +1,54 @@
+{
+  "video_id": "M5",
+  "group": "M",
+  "notes": "MIXED (spoken + on-screen text + caption). Watch https://vm.tiktok.com/ZNRvcCFga/ and list each venue from ANY channel (merge duplicates into one POI). POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional (needed only for geodesic error). Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "Sagrada Familia",
+      "category": "Landmark",
+      "city": "Barcelona",
+      "country": "Spain",
+      "latitude": 41.4037,
+      "longitude": 2.1748
+    },
+    {
+      "name": "Casa Batllo",
+      "category": "Landmark",
+      "city": "Barcelona",
+      "country": "Spain",
+      "latitude": 41.3918,
+      "longitude": 2.16484,
+      "alternatives": ["Casa Batlló"]
+    },
+    {
+      "name": "La Boqueria Market",
+      "category": "Shopping",
+      "city": "Barcelona",
+      "country": "Spain",
+      "latitude": 41.3819,
+      "longitude": 2.1716
+    },
+    {
+      "name": "Gothic Quarter",
+      "category": "Neighborhood",
+      "city": "Barcelona",
+      "country": "Spain"
+    },
+    {
+      "name": "Barceloneta",
+      "category": "Other",
+      "city": "Barcelona",
+      "country": "Spain",
+      "alternatives": ["Barcelona Beach", "Barceloneta Beach"]
+    },
+    {
+      "name": "Churreria Trebol",
+      "category": "Other",
+      "city": "Barcelona",
+      "country": "Spain",
+      "latitude": 41.3980,
+      "longitude": 2.1609,
+      "alternatives": ["Xurreria Trebol"]
+    }
+  ]
+}

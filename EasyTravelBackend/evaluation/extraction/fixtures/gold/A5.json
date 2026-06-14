@@ -1,0 +1,114 @@
+{
+  "video_id": "A5",
+  "group": "A",
+  "notes": "AUDIO-ONLY. Watch https://vm.tiktok.com/ZNRvcXgDG/ and list each SPOKEN venue. POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional (needed only for geodesic error). Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "3 Arts Club Cafe",
+      "category": "Cafe",
+      "city": "Chicago",
+      "country": "USA",
+      "latitude": 41.9059,
+      "longitude": -87.6302
+    },
+    {
+      "name": "The Riverwalk",
+      "category": "Other",
+      "city": "Chicago",
+      "country": "USA",
+      "latitude": 41.8884,
+      "longitude": -87.6216,
+      "alternatives": ["Chicago Riverwalk", "Chicago River Walk"]
+    },
+    {
+      "name": "Michigan Avenue",
+      "category": "Other",
+      "city": "Chicago",
+      "country": "USA",
+      "latitude": 41.8906,
+      "longitude": -87.6241
+    },
+    {
+      "name": "Architecture Boat Tour",
+      "category": "Other",
+      "city": "Chicago",
+      "country": "USA",
+      "latitude": 41.8906,
+      "longitude": -87.6164
+    },
+    {
+      "name": "Tiny Tapp",
+      "category": "Cafe",
+      "city": "Chicago",
+      "country": "USA",
+      "alternatives": ["Tiny Tapp Chicago"]
+    },
+    {
+      "name": "City Winery",
+      "category": "Restaurant",
+      "city": "Chicago",
+      "country": "USA",
+      "latitude": 41.8845,
+      "longitude": -87.6570,
+      "alternatives": ["City Winery Chicago"]
+    },
+    {
+      "name": "Cindy's Rooftop",
+      "category": "Restaurant",
+      "city": "Chicago",
+      "country": "USA",
+      "alternatives": ["Cindy's", "Cindy's Chicago"]
+    },
+    {
+      "name": "The Bean",
+      "category": "Landmark",
+      "city": "Chicago",
+      "country": "USA",
+      "latitude": 41.8826,
+      "longitude": -87.6234,
+      "alternatives": ["Cloud Gate", "The Cloud Gate"]
+    },
+    {
+      "name": "Art Institute of Chicago",
+      "category": "Museum",
+      "city": "Chicago",
+      "country": "USA",
+      "latitude": 41.8796,
+      "longitude": -87.6224,
+      "alternatives": ["Art Institute", "Art Institute Chicago"]
+    },
+    {
+      "name": "Fulton Market",
+      "category": "Neighborhood",
+      "city": "Chicago", 
+      "country": "USA",
+      "latitude": 41.8868,
+      "longitude": -87.6522
+    },
+    {
+      "name": "Trevoli Tavern",
+      "category": "Restaurant",
+      "city": "Chicago",
+      "country": "USA",
+      "alternatives": ["Trevoli", "Trevoli Tavern Chicago", "Tavern"]
+    },
+    {
+      "name": "Aba",
+      "category": "Restaurant",
+      "city": "Chicago",
+      "country": "USA",
+      "latitude": 41.8860,
+      "longitude": -87.6483,
+      "alternatives": ["Aba Chicago"]
+    },
+    {
+      "name": "Bisous",
+      "category": "Restaurant",
+      "city": "Chicago",
+      "country": "USA",
+      "latitude": 41.8864,
+      "longitude": -87.6534,
+      "alternatives": ["Bisous Chicago"]
+    }
+  ]
+}

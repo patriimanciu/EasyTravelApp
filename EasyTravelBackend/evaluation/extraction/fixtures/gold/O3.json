@@ -1,0 +1,147 @@
+{
+  "video_id": "O3",
+  "group": "O",
+  "notes": "OCR-ONLY. Watch https://vm.tiktok.com/ZNRvcayTn/ and list each venue shown as ON-SCREEN TEXT. POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional (needed only for geodesic error). Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "Science Museum",
+      "category": "Museum",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.4973,
+      "longitude": -0.1758
+    },
+    {
+      "name": "Garden at 120",
+      "category": "Restaurant",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.5123,
+      "longitude": -0.0803
+    },
+    {
+      "name": "Outernet",
+      "category": "Other",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.5157,
+      "longitude": -0.1297,
+      "alternatives": ["Outernet London"]
+    },
+    {
+      "name": "Sky Garden",
+      "category": "Other",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.5113,
+      "longitude": -0.0833
+    },
+    {
+      "name": "Barbican Centre",
+      "category": "Other",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.5203,
+      "longitude": -0.09317
+    },
+    {
+      "name": "Hunterian Museum",
+      "category": "Museum",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.5154,
+      "longitude": -0.1153
+    },
+    {
+      "name": "Tate Britain",
+      "category": "Museum",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.49118,
+      "longitude": -0.1273
+    },
+    {
+      "name": "John Soane Museum",
+      "category": "Museum",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.5171,
+      "longitude": -0.1172,
+      "alternatives": ["Sir John Soane's Museum"]
+    },
+    {
+      "name": "Natural History Museum",
+      "category": "Museum",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.4967,
+      "longitude": -0.1757
+    },
+    {
+      "name": "Horizon 22", 
+      "category": "Other",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.51468,
+      "longitude": -0.0824
+    },
+    {
+      "name": "Tate Modern",
+      "category": "Museum",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.5076,
+      "longitude": -0.0984
+    },
+    {
+      "name": "V&A Museum",
+      "category": "Museum",
+      "city": "London",
+      "country": "United Kingdom", 
+      "latitude": 51.4967,
+      "longitude": -0.1715,
+      "alternatives": ["Victoria and Albert Museum"]
+    },
+    {
+      "name": "British Museum",
+      "category": "Museum",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.5195,
+      "longitude": -0.1282
+    },
+    {
+      "name": "Wallace Collection",
+      "category": "Museum",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.5174,
+      "longitude": -0.1526
+    },
+    {
+      "name": "Japanese Garden",
+      "category": "Park",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.5033,
+      "longitude": -0.2035,
+      "alternatives": ["Kyoto Garden"]
+    },
+    {
+      "name": "National Gallery",
+      "category": "Museum",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.5090,
+      "longitude": -0.1275
+    },
+    {
+      "name": "Isabella Plantation",
+      "category": "Park",
+      "city": "London",
+      "country": "United Kingdom",
+      "latitude": 51.43203,
+      "longitude": -0.2724
+    }
+  ]
+}

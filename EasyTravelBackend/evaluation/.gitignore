@@ -1,0 +1,6 @@
+# Generated evaluation outputs
+reports/
+responses/
+.geocode_cache.json
+__pycache__/
+*.pyc

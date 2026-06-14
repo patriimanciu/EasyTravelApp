@@ -1,0 +1,80 @@
+{
+  "video_id": "O5",
+  "group": "O",
+  "notes": "OCR-ONLY. Watch https://vm.tiktok.com/ZNRcJ67xv/ and list each venue shown as ON-SCREEN TEXT. NOTE: this link currently duplicates M3 — replace with a distinct OCR-only video. POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional. Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "Doge's Palace",
+      "category": "Landmark",
+      "city": "Venice",
+      "country": "Italy",
+      "latitude": 45.4337,
+      "longitude": 12.3407
+    },
+    {
+      "name": "St. Mark's Basilica",
+      "category": "Landmark",
+      "city": "Venice",
+      "country": "Italy",
+      "latitude": 45.4346,
+      "longitude": 12.3404
+    },
+    {
+      "name": "Correr Museum",
+      "category": "Museum",
+      "city": "Venice",
+      "country": "Italy",
+      "latitude": 45.4339,
+      "longitude": 12.3378
+    },
+    {
+      "name": "La Fenice Opera House",
+      "category": "Landmark",
+      "city": "Venice",
+      "country": "Italy",
+      "latitude": 45.4337,
+      "longitude": 12.3342
+    },
+    {
+      "name": "Palazzo Contarini del Bovolo",
+      "category": "Landmark",
+      "city": "Venice",
+      "country": "Italy",
+      "latitude": 45.4349,
+      "longitude": 12.3349
+    },
+    {
+      "name": "Church of San Pantalon",
+      "category": "Landmark",
+      "city": "Venice",
+      "country": "Italy",
+      "latitude": 45.4356,
+      "longitude": 12.3253
+    },
+    {
+      "name": "St. Mark's Bell Tower",
+      "category": "Landmark",
+      "city": "Venice",
+      "country": "Italy",
+      "latitude": 45.4341,
+      "longitude": 12.3400
+    },
+    {
+      "name": "Rialto Bridge",
+      "category": "Landmark",
+      "city": "Venice",
+      "country": "Italy",
+      "latitude": 45.4380,
+      "longitude": 12.3361
+    },
+    {
+      "name": "Ponte dei Sospiri",
+      "category": "Landmark",
+      "city": "Venice",
+      "country": "Italy",
+      "latitude": 45.4341,
+      "longitude": 12.3413,
+      "alternatives": ["Bridge of Sighs"]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "video_id": "A2",
+  "group": "A",
+  "notes": "AUDIO-ONLY. Watch https://vm.tiktok.com/ZNRvc98VH/ and list each SPOKEN venue. POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional (needed only for geodesic error). Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "Bagel Boy",
+      "category": "Restaurant",
+      "city": "Amsterdam",
+      "country": "Netherlands",
+      "latitude": 52.3613,
+      "longitude": 4.8865,
+      "alternatives": ["BagelBoy"]
+    },
+    {
+      "name": "Vondelpark",
+      "category": "Park",
+      "city": "Amsterdam",
+      "country": "Netherlands",
+      "latitude": 52.3580,
+      "longitude": 4.8686
+    },
+    {
+      "name": "The Siren",
+      "category": "Restaurant",
+      "city": "Amsterdam",
+      "country": "Netherlands",
+      "latitude": 52.3670,
+      "longitude": 4.8937,
+      "alternatives": ["Siren", "The Siren Amsterdam"]
+    }
+  ]
+}

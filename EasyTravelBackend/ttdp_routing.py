@@ -91,7 +91,7 @@ def _osrm_table_duration_seconds(
     lo = np.array([float(x) for x in lons], dtype=np.float64)
     h_fallback = travel_time_matrix_haversine(la, lo, speed_m_s)
 
-    coords = ";".join(f"{float(lon)},{float(lat)}" for lat, lon in zip(lats, lons, strict=True))
+    coords = ";".join(f"{float(lon)},{float(lat)}" for lat, lon in zip(lats, lons))
     url = f"{base_url.rstrip('/')}/table/v1/{prof}/{coords}?annotations=duration"
     req = urllib.request.Request(url, headers={"User-Agent": "EasyTravelBackend/1.0"})
     try:

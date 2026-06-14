@@ -1,0 +1,254 @@
+{
+  "city": "Paris",
+  "_comment": "Real Paris POI pool for the dense-urban-core routing profile (thesis Section 5.2.2). 30 named landmarks within central Paris; origin at Pont de l'Archeveche (Ile de la Cite), accommodation near Saint-Michel. Service times reflect typical tourist visit durations.",
+  "origin": {
+    "latitude": 48.8509,
+    "longitude": 2.3514
+  },
+  "accommodation": {
+    "latitude": 48.8527,
+    "longitude": 2.3476
+  },
+  "pois": [
+    {
+      "id": "dense_001",
+      "name": "Eiffel Tower",
+      "latitude": 48.8584,
+      "longitude": 2.2945,
+      "priority": 5,
+      "service_time_seconds": 5400
+    },
+    {
+      "id": "dense_002",
+      "name": "Louvre Museum",
+      "latitude": 48.8606,
+      "longitude": 2.3376,
+      "priority": 5,
+      "service_time_seconds": 10800
+    },
+    {
+      "id": "dense_003",
+      "name": "Notre-Dame Cathedral",
+      "latitude": 48.8530,
+      "longitude": 2.3499,
+      "priority": 5,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "dense_004",
+      "name": "Musee d'Orsay",
+      "latitude": 48.8600,
+      "longitude": 2.3266,
+      "priority": 4,
+      "service_time_seconds": 7200
+    },
+    {
+      "id": "dense_005",
+      "name": "Arc de Triomphe",
+      "latitude": 48.8738,
+      "longitude": 2.2950,
+      "priority": 4,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "dense_006",
+      "name": "Sacre-Coeur Basilica",
+      "latitude": 48.8867,
+      "longitude": 2.3431,
+      "priority": 4,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "dense_007",
+      "name": "Centre Pompidou",
+      "latitude": 48.8607,
+      "longitude": 2.3522,
+      "priority": 4,
+      "service_time_seconds": 5400
+    },
+    {
+      "id": "dense_008",
+      "name": "Sainte-Chapelle",
+      "latitude": 48.8554,
+      "longitude": 2.3450,
+      "priority": 4,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "dense_009",
+      "name": "Musee Rodin",
+      "latitude": 48.8552,
+      "longitude": 2.3156,
+      "priority": 3,
+      "service_time_seconds": 5400
+    },
+    {
+      "id": "dense_010",
+      "name": "Palais Royal Gardens",
+      "latitude": 48.8637,
+      "longitude": 2.3370,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "dense_011",
+      "name": "Jardin des Tuileries",
+      "latitude": 48.8635,
+      "longitude": 2.3277,
+      "priority": 3,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "dense_012",
+      "name": "Place des Vosges",
+      "latitude": 48.8553,
+      "longitude": 2.3630,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "dense_013",
+      "name": "Jardin du Luxembourg",
+      "latitude": 48.8462,
+      "longitude": 2.3372,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "dense_014",
+      "name": "Musee du Quai Branly",
+      "latitude": 48.8609,
+      "longitude": 2.2972,
+      "priority": 3,
+      "service_time_seconds": 5400
+    },
+    {
+      "id": "dense_015",
+      "name": "Palais Garnier Opera House",
+      "latitude": 48.8719,
+      "longitude": 2.3317,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "dense_016",
+      "name": "Trocadero",
+      "latitude": 48.8631,
+      "longitude": 2.2888,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "dense_017",
+      "name": "Musee Picasso Paris",
+      "latitude": 48.8597,
+      "longitude": 2.3625,
+      "priority": 3,
+      "service_time_seconds": 5400
+    },
+    {
+      "id": "dense_018",
+      "name": "Musee de l'Orangerie",
+      "latitude": 48.8640,
+      "longitude": 2.3220,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "dense_019",
+      "name": "Musee de Cluny",
+      "latitude": 48.8508,
+      "longitude": 2.3440,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "dense_020",
+      "name": "Champs-Elysees",
+      "latitude": 48.8698,
+      "longitude": 2.3078,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "dense_021",
+      "name": "Canal Saint-Martin",
+      "latitude": 48.8706,
+      "longitude": 2.3619,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "dense_022",
+      "name": "Place de la Bastille",
+      "latitude": 48.8533,
+      "longitude": 2.3692,
+      "priority": 2,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "dense_023",
+      "name": "Moulin Rouge",
+      "latitude": 48.8842,
+      "longitude": 2.3324,
+      "priority": 2,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "dense_024",
+      "name": "Pont Neuf",
+      "latitude": 48.8572,
+      "longitude": 2.3414,
+      "priority": 2,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "dense_025",
+      "name": "Ile Saint-Louis",
+      "latitude": 48.8521,
+      "longitude": 2.3562,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "dense_026",
+      "name": "Eglise Saint-Germain-des-Pres",
+      "latitude": 48.8539,
+      "longitude": 2.3335,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "dense_027",
+      "name": "Palais de Tokyo",
+      "latitude": 48.8649,
+      "longitude": 2.2981,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "dense_028",
+      "name": "Parc des Buttes-Chaumont",
+      "latitude": 48.8791,
+      "longitude": 2.3825,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "dense_029",
+      "name": "Shakespeare and Company",
+      "latitude": 48.8527,
+      "longitude": 2.3473,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "dense_030",
+      "name": "Marche d'Aligre",
+      "latitude": 48.8493,
+      "longitude": 2.3794,
+      "priority": 1,
+      "service_time_seconds": 1800
+    }
+  ]
+}

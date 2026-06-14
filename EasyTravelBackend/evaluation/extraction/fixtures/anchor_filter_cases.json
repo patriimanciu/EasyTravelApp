@@ -1,0 +1,39 @@
+{
+  "_comment": "Hand-labelled anchor-city filter cases (thesis Section 5.2.1). Each row's should_remove=true marks a genuine anchor-city emission that the postprocess module ought to strip. Covers the three regimes from Section 3.6 testing: hyperlocal single-city, two-city, and explicit regional scope. Add the raw pre-filter LLM rows from your real fixture outputs here.",
+  "cases": [
+    {
+      "video_id": "HYPERLOCAL_1",
+      "title": "Top things to do in London | travel guide",
+      "description": "5 must-see spots in London this weekend",
+      "rows": [
+        { "name": "London", "city": "London", "should_remove": true },
+        { "name": "Tate Modern", "city": "London", "should_remove": false },
+        { "name": "Borough Market", "city": "London", "should_remove": false },
+        { "name": "Shoreditch", "city": "London", "should_remove": false },
+        { "name": "Sky Garden", "city": "London", "should_remove": false }
+      ]
+    },
+    {
+      "video_id": "TWO_CITY_1",
+      "title": "Things to do in Paris",
+      "description": "plus a Versailles day trip",
+      "rows": [
+        { "name": "Paris", "city": "Paris", "should_remove": true },
+        { "name": "Louvre Museum", "city": "Paris", "should_remove": false },
+        { "name": "Eiffel Tower", "city": "Paris", "should_remove": false },
+        { "name": "Versailles", "city": "Versailles", "should_remove": false }
+      ]
+    },
+    {
+      "video_id": "REGIONAL_1",
+      "title": "UK road trip: 4 cities you must visit",
+      "description": "England travel itinerary across the country",
+      "rows": [
+        { "name": "London", "city": "London", "should_remove": false },
+        { "name": "Manchester", "city": "Manchester", "should_remove": false },
+        { "name": "Edinburgh", "city": "Edinburgh", "should_remove": false },
+        { "name": "Bath", "city": "Bath", "should_remove": false }
+      ]
+    }
+  ]
+}

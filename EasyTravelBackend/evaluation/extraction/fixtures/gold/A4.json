@@ -1,0 +1,106 @@
+{
+  "video_id": "A4",
+  "group": "A",
+  "notes": "AUDIO-ONLY. Watch https://vm.tiktok.com/ZNRvcXGm9/ and list each SPOKEN venue. POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional (needed only for geodesic error). Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "Parque Lage",
+      "category": "Park",
+      "city": "Rio de Janeiro",
+      "country": "Brazil",
+      "latitude": -22.9611,
+      "longitude": -43.2127,
+      "alternatives": ["Park Lage (Parque Lage)"]
+    },
+    {
+      "name": "Botanical Garden",
+      "category": "Park",
+      "city": "Rio de Janeiro",
+      "country": "Brazil",
+      "latitude": -22.9707,
+      "longitude": -43.2235,
+      "alternatives": []
+    },
+    {
+      "name": "Chirst the Redeemer",
+      "category": "Landmark",
+      "city": "Rio de Janeiro",
+      "country": "Brazil",
+      "latitude": -22.9519,
+      "longitude": -43.2105,
+      "alternatives": []
+    },
+    {
+      "name": "Sugarloaf Mountain",
+      "category": "Landmark",
+      "city": "Rio de Janeiro",
+      "country": "Brazil",
+      "latitude": -22.9493,
+      "longitude": -43.1546,
+      "alternatives": []
+    },
+    {
+      "name": "Gloria Feria",
+      "category": "Other",
+      "city": "Rio de Janeiro",
+      "country": "Brazil",
+      "latitude": -22.5515,
+      "longitude": -43.1025,
+      "alternatives": ["Gloria", "Glória"]
+    },
+    {
+      "name": "Samba Drome",
+      "category": "Nightlife",
+      "city": "Rio de Janeiro",
+      "country": "Brazil",
+      "latitude": -22.9112,
+      "longitude": -43.1977,
+      "alternatives": []
+    },
+    {
+      "name": "Copacabana Palace",
+      "category": "Hotel",
+      "city": "Rio de Janeiro",
+      "country": "Brazil",
+      "latitude": -22.9672,
+      "longitude": -43.1786,
+      "alternatives": []
+    },
+    {
+      "name": "Santa Teresa",
+      "category": "Neighborhood",
+      "city": "Rio de Janeiro",
+      "country": "Brazil",
+      "latitude": -22.9206,
+      "longitude": -43.1896,
+      "alternatives": []
+    },
+    {
+      "name": "Selarón Stairs",
+      "category": "Landmark",
+      "city": "Rio de Janeiro",
+      "country": "Brazil",
+      "latitude": -22.9143,
+      "longitude": -43.1789,
+      "alternatives": ["Selarón Steps", "Selaron Stairs", "Selaron Steps", "Celerone Steps", "Selar\u00f3n Steps (Escadaria Selar\u00f3n)"]
+    },
+    {
+      "name": "Ipanema Beach",
+      "category": "Other",
+      "city": "Rio de Janeiro",
+      "country": "Brazil",
+      "latitude": -22.9871,
+      "longitude": -43.2048,
+      "alternatives": ["Ipanema"]
+    },
+    {
+      "name": "Copacabana",
+      "category": "Other",
+      "city": "Rio de Janeiro",
+      "country": "Brazil",
+      "latitude": -22.9739,
+      "longitude": -43.1853,
+      "alternatives": ["Copacabana Beach"]
+    }
+  ]
+}

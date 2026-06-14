@@ -1,0 +1,116 @@
+{
+  "video_id": "A3",
+  "group": "A",
+  "notes": "AUDIO-ONLY. Watch https://vm.tiktok.com/ZNRvoSEAU/ and list each SPOKEN venue. POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional (needed only for geodesic error). Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "The French Bastards",
+      "category": "Cafe",
+      "city": "Paris",
+      "country": "France",
+      "latitude": 48.8656,
+      "longitude": 2.3504,
+      "alternatives": ["The French Bastards Cafe", "French Bastards"]
+    },
+    {
+      "name": "Notre Dame Cathedral",
+      "category": "Landmark",
+      "city": "Paris",
+      "country": "France",
+      "latitude": 48.8530,
+      "longitude": 2.3499,
+      "alternatives": ["Notre Dame"]
+    },
+    {
+      "name": "Shakespeare and Company",
+      "category": "Other",
+      "city": "Paris",
+      "country": "France",
+      "latitude": 48.8526,
+      "longitude": 2.3471,
+      "alternatives": ["Shakespeare & Company", "Shakespeare and Co."]
+    },
+    {
+      "name": "Luxembourg Gardens",
+      "category": "Park",
+      "city": "Paris",
+      "country": "France",
+      "latitude": 48.8466,
+      "longitude": 2.3363
+    },
+    {
+      "name": "Cafe de Flore",
+      "category": "Cafe",
+      "city": "Paris",
+      "country": "France",
+      "latitude": 48.8542,
+      "longitude": 2.3326
+    },
+    {
+      "name": "Le Deux Magots",
+      "category": "Cafe",
+      "city": "Paris",
+      "country": "France",
+      "latitude": 48.5114,
+      "longitude": 2.1959
+    },
+    {
+      "name": "Louvre Museum",
+      "category": "Museum",
+      "city": "Paris",
+      "country": "France",
+      "latitude": 48.8606,
+      "longitude": 2.3376,
+      "alternatives": ["Louvre"]
+    },
+    {
+      "name": "L'Orangerie Museum",
+      "category": "Museum",
+      "city": "Paris",
+      "country": "France",
+      "latitude": 48.8638,
+      "longitude": 2.3227,
+      "alternatives": ["L'Orangerie"]
+    },
+    {
+      "name": "Montmartre",
+      "category": "Neighborhood",
+      "city": "Paris",
+      "country": "France", 
+      "latitude": 48.8862,
+      "longitude": 2.3431
+    },
+    {
+      "name": "Eiffel Tower",
+      "category": "Landmark",
+      "city": "Paris",
+      "country": "France",
+      "latitude": 48.8584,
+      "longitude": 2.2945
+    },
+    {
+      "name": "Rue de l'Universite",
+      "category": "Other",
+      "city": "Paris",
+      "country": "France",
+      "latitude": 48.8611,
+      "longitude": 2.3076
+    },
+    {
+      "name": "La Jacobine",
+      "category": "Restaurant",
+      "city": "Paris",
+      "country": "France",
+      "latitude": 48.8534,
+      "longitude": 2.3389
+    },
+    {
+      "name": "Little Red Door",
+      "category": "Nightlife",
+      "city": "Paris",
+      "country": "France",
+      "latitude": 48.8636,
+      "longitude": 2.3636
+    }
+  ]
+}

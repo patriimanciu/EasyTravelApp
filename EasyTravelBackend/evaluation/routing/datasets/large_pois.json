@@ -1,0 +1,734 @@
+{
+  "city": "Rome",
+  "_comment": "Real Rome POI pool for the large-dispersed routing profile (thesis Section 5.2.2). 90 named attractions spread across Rome's historical centre and outlying districts; origin at Roma Termini station, accommodation near Campo de' Fiori. Geographic range spans Vatican in the west to Via Appia catacombs in the south (~8 km) and EUR district (~9 km south), plus Ostia Antica (~30 km) as a deliberate outlier. The budget constraint (8 h/day x 5 days) cannot cover all 80 sampled stops, so dropped-stop and priority-satisfaction behaviour is meaningfully tested.",
+  "origin": {
+    "latitude": 41.9010,
+    "longitude": 12.5009
+  },
+  "accommodation": {
+    "latitude": 41.8955,
+    "longitude": 12.4722
+  },
+  "pois": [
+    {
+      "id": "large_001",
+      "name": "Colosseum",
+      "latitude": 41.8902,
+      "longitude": 12.4922,
+      "priority": 5,
+      "service_time_seconds": 7200
+    },
+    {
+      "id": "large_002",
+      "name": "Roman Forum",
+      "latitude": 41.8925,
+      "longitude": 12.4853,
+      "priority": 4,
+      "service_time_seconds": 5400
+    },
+    {
+      "id": "large_003",
+      "name": "Palatine Hill",
+      "latitude": 41.8892,
+      "longitude": 12.4877,
+      "priority": 4,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_004",
+      "name": "Arch of Constantine",
+      "latitude": 41.8895,
+      "longitude": 12.4904,
+      "priority": 3,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "large_005",
+      "name": "Circus Maximus",
+      "latitude": 41.8862,
+      "longitude": 12.4851,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_006",
+      "name": "San Clemente Basilica",
+      "latitude": 41.8904,
+      "longitude": 12.4951,
+      "priority": 3,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_007",
+      "name": "Domus Aurea",
+      "latitude": 41.8926,
+      "longitude": 12.4948,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_008",
+      "name": "Capitoline Museums",
+      "latitude": 41.8932,
+      "longitude": 12.4828,
+      "priority": 4,
+      "service_time_seconds": 7200
+    },
+    {
+      "id": "large_009",
+      "name": "Vittoriano (Altare della Patria)",
+      "latitude": 41.8943,
+      "longitude": 12.4817,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_010",
+      "name": "Pantheon",
+      "latitude": 41.8986,
+      "longitude": 12.4769,
+      "priority": 5,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_011",
+      "name": "Piazza Navona",
+      "latitude": 41.8992,
+      "longitude": 12.4731,
+      "priority": 4,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_012",
+      "name": "Campo de' Fiori",
+      "latitude": 41.8955,
+      "longitude": 12.4722,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_013",
+      "name": "San Luigi dei Francesi (Caravaggio)",
+      "latitude": 41.8993,
+      "longitude": 12.4726,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_014",
+      "name": "Palazzo Altemps",
+      "latitude": 41.9009,
+      "longitude": 12.4713,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_015",
+      "name": "Galleria Doria Pamphilj",
+      "latitude": 41.8985,
+      "longitude": 12.4808,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_016",
+      "name": "Sant'Ignazio di Loyola Church",
+      "latitude": 41.8983,
+      "longitude": 12.4789,
+      "priority": 2,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "large_017",
+      "name": "Santa Maria sopra Minerva",
+      "latitude": 41.8979,
+      "longitude": 12.4769,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_018",
+      "name": "Largo di Torre Argentina",
+      "latitude": 41.8963,
+      "longitude": 12.4729,
+      "priority": 2,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "large_019",
+      "name": "Il Gesu Church",
+      "latitude": 41.8965,
+      "longitude": 12.4748,
+      "priority": 2,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "large_020",
+      "name": "Trevi Fountain",
+      "latitude": 41.9009,
+      "longitude": 12.4833,
+      "priority": 5,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_021",
+      "name": "Spanish Steps",
+      "latitude": 41.9057,
+      "longitude": 12.4823,
+      "priority": 4,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_022",
+      "name": "Palazzo Barberini",
+      "latitude": 41.9039,
+      "longitude": 12.4881,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_023",
+      "name": "Palazzo Massimo alle Terme",
+      "latitude": 41.9035,
+      "longitude": 12.4982,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_024",
+      "name": "Santa Maria Maggiore",
+      "latitude": 41.8976,
+      "longitude": 12.4987,
+      "priority": 3,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_025",
+      "name": "Piazza della Repubblica",
+      "latitude": 41.9044,
+      "longitude": 12.4972,
+      "priority": 2,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "large_026",
+      "name": "Baths of Diocletian",
+      "latitude": 41.9041,
+      "longitude": 12.4993,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_027",
+      "name": "Piazza Quirinale",
+      "latitude": 41.8994,
+      "longitude": 12.4842,
+      "priority": 2,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "large_028",
+      "name": "Villa Medici",
+      "latitude": 41.9065,
+      "longitude": 12.4823,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_029",
+      "name": "St Peter's Basilica",
+      "latitude": 41.9022,
+      "longitude": 12.4539,
+      "priority": 5,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_030",
+      "name": "Vatican Museums and Sistine Chapel",
+      "latitude": 41.9065,
+      "longitude": 12.4536,
+      "priority": 5,
+      "service_time_seconds": 14400
+    },
+    {
+      "id": "large_031",
+      "name": "Castel Sant'Angelo",
+      "latitude": 41.9031,
+      "longitude": 12.4663,
+      "priority": 4,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_032",
+      "name": "Ponte Sant'Angelo",
+      "latitude": 41.9010,
+      "longitude": 12.4654,
+      "priority": 3,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "large_033",
+      "name": "Prati neighbourhood (Via Cola di Rienzo)",
+      "latitude": 41.9073,
+      "longitude": 12.4600,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_034",
+      "name": "Jewish Ghetto",
+      "latitude": 41.8949,
+      "longitude": 12.4761,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_035",
+      "name": "Isola Tiberina",
+      "latitude": 41.8897,
+      "longitude": 12.4773,
+      "priority": 2,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "large_036",
+      "name": "Palazzo Farnese",
+      "latitude": 41.8950,
+      "longitude": 12.4705,
+      "priority": 2,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "large_037",
+      "name": "Palazzo Spada",
+      "latitude": 41.8955,
+      "longitude": 12.4714,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_038",
+      "name": "Santa Maria in Trastevere",
+      "latitude": 41.8901,
+      "longitude": 12.4695,
+      "priority": 4,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_039",
+      "name": "Gianicolo Viewpoint",
+      "latitude": 41.8914,
+      "longitude": 12.4657,
+      "priority": 3,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "large_040",
+      "name": "Villa Farnesina",
+      "latitude": 41.8919,
+      "longitude": 12.4661,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_041",
+      "name": "Orto Botanico di Roma",
+      "latitude": 41.8887,
+      "longitude": 12.4668,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_042",
+      "name": "Ponte Sisto",
+      "latitude": 41.8942,
+      "longitude": 12.4694,
+      "priority": 2,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "large_043",
+      "name": "Giardino degli Aranci (Orange Garden)",
+      "latitude": 41.8831,
+      "longitude": 12.4797,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_044",
+      "name": "Knights of Malta Keyhole",
+      "latitude": 41.8826,
+      "longitude": 12.4791,
+      "priority": 3,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "large_045",
+      "name": "Baths of Caracalla",
+      "latitude": 41.8796,
+      "longitude": 12.4920,
+      "priority": 4,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_046",
+      "name": "Testaccio Market",
+      "latitude": 41.8793,
+      "longitude": 12.4770,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_047",
+      "name": "Pyramid of Cestius",
+      "latitude": 41.8768,
+      "longitude": 12.4829,
+      "priority": 2,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "large_048",
+      "name": "Protestant Cemetery Rome",
+      "latitude": 41.8769,
+      "longitude": 12.4817,
+      "priority": 2,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "large_049",
+      "name": "Centrale Montemartini",
+      "latitude": 41.8754,
+      "longitude": 12.4772,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_050",
+      "name": "Mouth of Truth (Santa Maria in Cosmedin)",
+      "latitude": 41.8875,
+      "longitude": 12.4815,
+      "priority": 3,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "large_051",
+      "name": "Temple of Hercules Victor",
+      "latitude": 41.8888,
+      "longitude": 12.4823,
+      "priority": 2,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "large_052",
+      "name": "San Giovanni in Laterano",
+      "latitude": 41.8860,
+      "longitude": 12.5058,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_053",
+      "name": "Santa Croce in Gerusalemme",
+      "latitude": 41.8868,
+      "longitude": 12.5135,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_054",
+      "name": "Borghese Gallery",
+      "latitude": 41.9143,
+      "longitude": 12.4924,
+      "priority": 5,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_055",
+      "name": "Villa Borghese Gardens",
+      "latitude": 41.9117,
+      "longitude": 12.4921,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_056",
+      "name": "Pincian Hill Terrace",
+      "latitude": 41.9134,
+      "longitude": 12.4813,
+      "priority": 2,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "large_057",
+      "name": "Piazza del Popolo",
+      "latitude": 41.9113,
+      "longitude": 12.4767,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_058",
+      "name": "Santa Maria del Popolo",
+      "latitude": 41.9113,
+      "longitude": 12.4758,
+      "priority": 3,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_059",
+      "name": "Galleria Nazionale d'Arte Moderna",
+      "latitude": 41.9173,
+      "longitude": 12.4887,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_060",
+      "name": "Etruscan Museum Villa Giulia",
+      "latitude": 41.9231,
+      "longitude": 12.4841,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_061",
+      "name": "MAXXI Museum of Contemporary Art",
+      "latitude": 41.9292,
+      "longitude": 12.4693,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_062",
+      "name": "Auditorium Parco della Musica",
+      "latitude": 41.9286,
+      "longitude": 12.4734,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_063",
+      "name": "Ponte Milvio",
+      "latitude": 41.9378,
+      "longitude": 12.4657,
+      "priority": 2,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "large_064",
+      "name": "Foro Italico",
+      "latitude": 41.9376,
+      "longitude": 12.4566,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_065",
+      "name": "Bioparco di Roma",
+      "latitude": 41.9194,
+      "longitude": 12.4975,
+      "priority": 1,
+      "service_time_seconds": 7200
+    },
+    {
+      "id": "large_066",
+      "name": "Coppede Quarter",
+      "latitude": 41.9133,
+      "longitude": 12.5136,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_067",
+      "name": "Villa Torlonia (Casina delle Civette)",
+      "latitude": 41.9098,
+      "longitude": 12.5155,
+      "priority": 1,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_068",
+      "name": "Catacombs of San Callisto",
+      "latitude": 41.8555,
+      "longitude": 12.5120,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_069",
+      "name": "Catacombs of Domitilla",
+      "latitude": 41.8559,
+      "longitude": 12.5048,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_070",
+      "name": "Circus of Maxentius",
+      "latitude": 41.8595,
+      "longitude": 12.5108,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_071",
+      "name": "Mausoleum of Cecilia Metella",
+      "latitude": 41.8535,
+      "longitude": 12.5148,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_072",
+      "name": "Parco Regionale Appia Antica",
+      "latitude": 41.8603,
+      "longitude": 12.5126,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_073",
+      "name": "Basilica di San Paolo fuori le Mura",
+      "latitude": 41.8588,
+      "longitude": 12.4763,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_074",
+      "name": "Palazzo della Civilta Italiana (EUR)",
+      "latitude": 41.8270,
+      "longitude": 12.4690,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_075",
+      "name": "Museo della Civilta Romana (EUR)",
+      "latitude": 41.8266,
+      "longitude": 12.4709,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_076",
+      "name": "Ostia Antica",
+      "latitude": 41.7560,
+      "longitude": 12.2893,
+      "priority": 3,
+      "service_time_seconds": 7200
+    },
+    {
+      "id": "large_077",
+      "name": "Arch of Janus",
+      "latitude": 41.8878,
+      "longitude": 12.4837,
+      "priority": 2,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "large_078",
+      "name": "Sant'Andrea della Valle",
+      "latitude": 41.8961,
+      "longitude": 12.4742,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_079",
+      "name": "Piazza Mattei (Tortoise Fountain)",
+      "latitude": 41.8941,
+      "longitude": 12.4769,
+      "priority": 2,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "large_080",
+      "name": "Porta Maggiore",
+      "latitude": 41.8936,
+      "longitude": 12.5158,
+      "priority": 2,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "large_081",
+      "name": "Pigneto neighbourhood",
+      "latitude": 41.8926,
+      "longitude": 12.5299,
+      "priority": 1,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_082",
+      "name": "Galleria Borghese (exterior garden)",
+      "latitude": 41.9117,
+      "longitude": 12.4835,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_083",
+      "name": "Palazzo Venezia Museum",
+      "latitude": 41.8954,
+      "longitude": 12.4816,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_084",
+      "name": "Crypta Balbi",
+      "latitude": 41.8960,
+      "longitude": 12.4756,
+      "priority": 1,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "large_085",
+      "name": "Oratorio dei Filippini",
+      "latitude": 41.8990,
+      "longitude": 12.4713,
+      "priority": 1,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "large_086",
+      "name": "Fontana delle Tartarughe area walk",
+      "latitude": 41.8943,
+      "longitude": 12.4757,
+      "priority": 1,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "large_087",
+      "name": "Via Sacra viewpoint",
+      "latitude": 41.8917,
+      "longitude": 12.4863,
+      "priority": 2,
+      "service_time_seconds": 900
+    },
+    {
+      "id": "large_088",
+      "name": "Foro di Traiano",
+      "latitude": 41.8962,
+      "longitude": 12.4862,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "large_089",
+      "name": "Mercati di Traiano Museum",
+      "latitude": 41.8959,
+      "longitude": 12.4870,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "large_090",
+      "name": "San Lorenzo district",
+      "latitude": 41.9013,
+      "longitude": 12.5157,
+      "priority": 1,
+      "service_time_seconds": 1800
+    }
+  ]
+}

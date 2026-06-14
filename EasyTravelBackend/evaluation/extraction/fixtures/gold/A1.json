@@ -1,0 +1,39 @@
+{
+  "video_id": "A1",
+  "group": "A",
+  "notes": "AUDIO-ONLY. Watch https://vm.tiktok.com/ZNRcJWp68/ and list each SPOKEN venue. POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional (needed only for geodesic error). Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "Brooklyn Bridge",
+      "category": "Landmark",
+      "city": "New York",
+      "country": "USA",
+      "latitude": 40.7061,
+      "longitude": -73.9969
+    },
+    {
+      "name": "Leon's bagels",
+      "category": "Cafe",
+      "city": "New York",
+      "country": "USA",
+      "latitude": 40.7278,
+      "longitude": -74.0004
+    },
+    {
+      "name": "Times Square",
+      "category": "Landmark",
+      "city": "New York",
+      "country": "USA",
+      "latitude": 40.7581,
+      "longitude": -73.9855
+    }, 
+    {
+      "name": "Rockefeller Center",
+      "category": "Landmark",
+      "city": "New York",
+      "country": "USA",
+      "latitude": 40.7591,
+      "longitude": -73.9787
+    }
+  ]
+}

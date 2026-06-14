@@ -1,0 +1,60 @@
+{
+  "video_id": "O1",
+  "group": "O",
+  "notes": "OCR-ONLY. Watch https://vm.tiktok.com/ZNRcdMxP9/ and list each venue shown as ON-SCREEN TEXT. POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional (needed only for geodesic error). Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "Trevi Fountain",
+      "category": "Landmark",
+      "city": "Rome",
+      "country": "Italy",
+      "latitude": 41.90107,
+      "longitude": 12.4836
+    },
+    {
+      "name": "Pantheon",
+      "category": "Landmark",
+      "city": "Rome",
+      "country": "Italy",
+      "latitude": 41.8987,
+      "longitude": 12.4767
+    },
+    {
+      "name": "Colosseum",
+      "category": "Landmark",
+      "city": "Rome",
+      "country": "Italy",
+      "latitude": 41.8905,
+      "longitude": 12.49302
+    },
+    {
+      "name": "Vatican Museum",
+      "category": "Museum",
+      "city": "Rome",
+      "country": "Italy",
+      "latitude": 41.9066,
+      "longitude": 12.4537
+    },
+    {
+      "name": "Pincio Terrace",
+      "category": "Restaurant",
+      "city": "Rome",
+      "country": "Italy"
+    },
+    {
+      "name": "Castle Sant'Angelo",
+      "category": "Landmark",
+      "city": "Rome",
+      "country": "Italy",
+      "latitude": 41.90320,
+      "longitude": 12.46622
+    },
+    {
+      "name": "Villa Borghese",
+      "category": "Other",
+      "city": "Rome",
+      "country": "Italy",
+      "alternatives": ["Borghese Gallery"]
+    }
+  ]
+}

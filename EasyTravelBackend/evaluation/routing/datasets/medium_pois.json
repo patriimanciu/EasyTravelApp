@@ -1,0 +1,414 @@
+{
+  "city": "London",
+  "_comment": "Real London POI pool for the medium-multi-day routing profile (thesis Section 5.2.2). 50 named attractions spread across inner and outer London; origin at King's Cross St Pancras (major transit hub), accommodation near Covent Garden. Three natural geographic clusters (West End, City/South Bank, South Kensington) test the planner's day-grouping quality over 3 days.",
+  "origin": {
+    "latitude": 51.5320,
+    "longitude": -0.1233
+  },
+  "accommodation": {
+    "latitude": 51.5117,
+    "longitude": -0.1240
+  },
+  "pois": [
+    {
+      "id": "medium_001",
+      "name": "Tower of London",
+      "latitude": 51.5081,
+      "longitude": -0.0759,
+      "priority": 5,
+      "service_time_seconds": 7200
+    },
+    {
+      "id": "medium_002",
+      "name": "Buckingham Palace",
+      "latitude": 51.5014,
+      "longitude": -0.1419,
+      "priority": 5,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_003",
+      "name": "British Museum",
+      "latitude": 51.5194,
+      "longitude": -0.1270,
+      "priority": 5,
+      "service_time_seconds": 10800
+    },
+    {
+      "id": "medium_004",
+      "name": "Houses of Parliament",
+      "latitude": 51.5007,
+      "longitude": -0.1246,
+      "priority": 5,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_005",
+      "name": "Westminster Abbey",
+      "latitude": 51.4994,
+      "longitude": -0.1273,
+      "priority": 4,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_006",
+      "name": "St Paul's Cathedral",
+      "latitude": 51.5138,
+      "longitude": -0.0984,
+      "priority": 4,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_007",
+      "name": "National Gallery",
+      "latitude": 51.5089,
+      "longitude": -0.1283,
+      "priority": 4,
+      "service_time_seconds": 7200
+    },
+    {
+      "id": "medium_008",
+      "name": "Tate Modern",
+      "latitude": 51.5076,
+      "longitude": -0.0994,
+      "priority": 4,
+      "service_time_seconds": 5400
+    },
+    {
+      "id": "medium_009",
+      "name": "Natural History Museum",
+      "latitude": 51.4967,
+      "longitude": -0.1764,
+      "priority": 4,
+      "service_time_seconds": 7200
+    },
+    {
+      "id": "medium_010",
+      "name": "Victoria and Albert Museum",
+      "latitude": 51.4966,
+      "longitude": -0.1722,
+      "priority": 4,
+      "service_time_seconds": 7200
+    },
+    {
+      "id": "medium_011",
+      "name": "Tower Bridge",
+      "latitude": 51.5055,
+      "longitude": -0.0754,
+      "priority": 4,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "medium_012",
+      "name": "Hyde Park",
+      "latitude": 51.5074,
+      "longitude": -0.1657,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_013",
+      "name": "Tate Britain",
+      "latitude": 51.4910,
+      "longitude": -0.1276,
+      "priority": 3,
+      "service_time_seconds": 5400
+    },
+    {
+      "id": "medium_014",
+      "name": "Churchill War Rooms",
+      "latitude": 51.5022,
+      "longitude": -0.1298,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_015",
+      "name": "Covent Garden",
+      "latitude": 51.5117,
+      "longitude": -0.1240,
+      "priority": 3,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_016",
+      "name": "Borough Market",
+      "latitude": 51.5054,
+      "longitude": -0.0910,
+      "priority": 3,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_017",
+      "name": "Kensington Palace",
+      "latitude": 51.5051,
+      "longitude": -0.1876,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_018",
+      "name": "Royal Observatory Greenwich",
+      "latitude": 51.4773,
+      "longitude": -0.0014,
+      "priority": 3,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_019",
+      "name": "National Maritime Museum",
+      "latitude": 51.4777,
+      "longitude": -0.0009,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_020",
+      "name": "Regent's Park",
+      "latitude": 51.5313,
+      "longitude": -0.1570,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_021",
+      "name": "Science Museum",
+      "latitude": 51.4978,
+      "longitude": -0.1747,
+      "priority": 3,
+      "service_time_seconds": 5400
+    },
+    {
+      "id": "medium_022",
+      "name": "Trafalgar Square",
+      "latitude": 51.5080,
+      "longitude": -0.1281,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "medium_023",
+      "name": "Camden Market",
+      "latitude": 51.5416,
+      "longitude": -0.1462,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_024",
+      "name": "Shakespeare's Globe Theatre",
+      "latitude": 51.5081,
+      "longitude": -0.0972,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_025",
+      "name": "Cutty Sark",
+      "latitude": 51.4831,
+      "longitude": -0.0091,
+      "priority": 3,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "medium_026",
+      "name": "Kew Gardens",
+      "latitude": 51.4787,
+      "longitude": -0.2956,
+      "priority": 3,
+      "service_time_seconds": 7200
+    },
+    {
+      "id": "medium_027",
+      "name": "National Portrait Gallery",
+      "latitude": 51.5095,
+      "longitude": -0.1283,
+      "priority": 3,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_028",
+      "name": "Somerset House",
+      "latitude": 51.5117,
+      "longitude": -0.1168,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_029",
+      "name": "Piccadilly Circus",
+      "latitude": 51.5101,
+      "longitude": -0.1340,
+      "priority": 2,
+      "service_time_seconds": 1200
+    },
+    {
+      "id": "medium_030",
+      "name": "Notting Hill Portobello Road",
+      "latitude": 51.5194,
+      "longitude": -0.2012,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_031",
+      "name": "Brick Lane",
+      "latitude": 51.5219,
+      "longitude": -0.0712,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_032",
+      "name": "Old Spitalfields Market",
+      "latitude": 51.5181,
+      "longitude": -0.0759,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_033",
+      "name": "Sky Garden",
+      "latitude": 51.5117,
+      "longitude": -0.0840,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_034",
+      "name": "Leadenhall Market",
+      "latitude": 51.5127,
+      "longitude": -0.0830,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "medium_035",
+      "name": "Barbican Centre",
+      "latitude": 51.5200,
+      "longitude": -0.0962,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_036",
+      "name": "Battersea Power Station",
+      "latitude": 51.4838,
+      "longitude": -0.1440,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "medium_037",
+      "name": "Chelsea Physic Garden",
+      "latitude": 51.4863,
+      "longitude": -0.1688,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_038",
+      "name": "Wallace Collection",
+      "latitude": 51.5153,
+      "longitude": -0.1515,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_039",
+      "name": "Apsley House",
+      "latitude": 51.5026,
+      "longitude": -0.1515,
+      "priority": 2,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_040",
+      "name": "St Katharine Docks",
+      "latitude": 51.5052,
+      "longitude": -0.0726,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "medium_041",
+      "name": "Southbank Queen's Walk",
+      "latitude": 51.5063,
+      "longitude": -0.1144,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "medium_042",
+      "name": "Greenwich Market",
+      "latitude": 51.4818,
+      "longitude": -0.0089,
+      "priority": 2,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "medium_043",
+      "name": "Columbia Road Flower Market",
+      "latitude": 51.5294,
+      "longitude": -0.0771,
+      "priority": 1,
+      "service_time_seconds": 1800
+    },
+    {
+      "id": "medium_044",
+      "name": "Queen Elizabeth Olympic Park",
+      "latitude": 51.5419,
+      "longitude": -0.0167,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_045",
+      "name": "Hampton Court Palace",
+      "latitude": 51.4037,
+      "longitude": -0.3374,
+      "priority": 3,
+      "service_time_seconds": 7200
+    },
+    {
+      "id": "medium_046",
+      "name": "Richmond Park",
+      "latitude": 51.4432,
+      "longitude": -0.2667,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_047",
+      "name": "Hampstead Heath",
+      "latitude": 51.5606,
+      "longitude": -0.1631,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_048",
+      "name": "Horniman Museum",
+      "latitude": 51.4418,
+      "longitude": -0.0581,
+      "priority": 2,
+      "service_time_seconds": 3600
+    },
+    {
+      "id": "medium_049",
+      "name": "Crystal Palace Park",
+      "latitude": 51.4199,
+      "longitude": -0.0728,
+      "priority": 1,
+      "service_time_seconds": 2700
+    },
+    {
+      "id": "medium_050",
+      "name": "Dulwich Picture Gallery",
+      "latitude": 51.4446,
+      "longitude": -0.0867,
+      "priority": 2,
+      "service_time_seconds": 3600
+    }
+  ]
+}

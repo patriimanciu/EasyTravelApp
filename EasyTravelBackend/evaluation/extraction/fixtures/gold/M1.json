@@ -1,0 +1,47 @@
+{
+  "video_id": "M1",
+  "group": "M",
+  "notes": "MIXED (spoken + on-screen text + caption). Watch https://vm.tiktok.com/ZNRvcH2bC/ and list each venue from ANY channel (merge duplicates into one POI). POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional (needed only for geodesic error). Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "Van Gogh Museum",
+      "category": "Museum",
+      "city": "Amesterdam",
+      "country": "Netherlands",
+      "latitude": 52.3581,
+      "longitude": 4.8812
+    },
+    {
+      "name": "Rijkmuseum",
+      "category": "Museum",
+      "city": "Amesterdam",
+      "country": "Netherlands",
+      "latitude": 52.3601,
+      "longitude": 4.8852
+    },
+    {
+      "name": "Vondalpark",
+      "category": "Park",
+      "city": "Amesterdam",
+      "country": "Netherlands",
+      "latitude": 52.3581,
+      "longitude": 4.8687
+    },
+    {
+      "name": "De Pijp",
+      "category": "Neighborhood",
+      "city": "Amesterdam",
+      "country": "Netherlands",
+      "latitude": 52.3543,
+      "longitude": 4.8988
+    },
+    {
+      "name": "Jordaan",
+      "category": "Neighborhood",
+      "city": "Amesterdam",
+      "country": "Netherlands",
+      "latitude": 52.37324,
+      "longitude": 4.87988
+    }
+  ]
+}

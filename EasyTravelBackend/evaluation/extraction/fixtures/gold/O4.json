@@ -1,0 +1,75 @@
+{
+  "video_id": "O4",
+  "group": "O",
+  "notes": "OCR-ONLY. Watch https://vm.tiktok.com/ZNRcJBjJH/ and list each venue shown as ON-SCREEN TEXT. POI schema: {\"name\":\"\",\"category\":\"\",\"city\":\"\",\"country\":\"\",\"latitude\":0.0,\"longitude\":0.0,\"alternatives\":[]}. Coordinates optional (needed only for geodesic error). Categories: Museum, Restaurant, Cafe, Landmark, Park, Hotel, Shopping, Nightlife, Neighborhood, City, Other.",
+  "pois": [
+    {
+      "name": "Danube River Cruise",
+      "category": "Other",
+      "city": "Budapest",
+      "country": "Hungary"
+    },
+    {
+      "name": "Secret Garden Spa",
+      "category": "Other",
+      "city": "Budapest",
+      "country": "Hungary",
+      "latitude": 47.5109,
+      "longitude": 19.0623
+    },
+    {
+      "name": "New York Cafe",
+      "category": "Cafe",
+      "city": "Budapest",
+      "country": "Hungary",
+      "latitude": 47.4988,
+      "longitude": 19.0707
+    },
+    {
+      "name": "Fisherman's Bastion",
+      "category": "Landmark",
+      "city": "Budapest",
+      "country": "Hungary",
+      "latitude": 47.5022,
+      "longitude": 19.0349
+    },
+    {
+      "name": "Ervin Szabó Library",
+      "category": "Other",
+      "city": "Budapest",
+      "country": "Hungary",
+      "latitude": 47.48959,
+      "longitude": 19.0654
+    },
+    {
+      "name": "Twentysix",
+      "category": "Restaurant",
+      "city": "Budapest",
+      "country": "Hungary",
+      "latitude": 47.4999,
+      "longitude": 19.0609
+    },
+    {
+      "name": "St Stephen's Basilica",
+      "category": "Landmark",
+      "city": "Budapest",
+      "country": "Hungary",
+      "latitude": 47.5015,
+      "longitude": 19.0547
+    },
+    {
+      "name": "Szimpla Kert",
+      "category": "Nightlife",
+      "city": "Budapest",
+      "country": "Hungary",
+      "latitude": 47.4970,
+      "longitude": 19.0639
+    },
+    {
+      "name": "Christmas Markets",
+      "category": "Other",
+      "city": "Budapest",
+      "country": "Hungary"
+    }
+  ]
+}
